@@ -39,7 +39,7 @@
                 <canvas id="overlay"></canvas>
                 <video
                         id="video"
-                        data-plyr='{ "hideControls": false }'
+                        data-plyr='{ "hideControls": false, "fullscreen": false }'
                         controls src="https://s3.amazonaws.com/amt-motion-relationships/videos/MOT17-09-DPM.mp4" onplay="resize_canvas(this)"></video>
             </div>
 
@@ -81,7 +81,6 @@
     <script language='Javascript'>turkSetAssignmentID();</script>
     <script type="text/javascript">
     var players = plyr.setup();
-    // TODO Disallow fullscreen
 
     document.body.onkeyup = function(e){
         if(e.keyCode === 32){
