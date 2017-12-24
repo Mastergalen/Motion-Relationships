@@ -5,6 +5,8 @@
         <script type='text/javascript' src='https://s3.amazonaws.com/mturk-public/externalHIT_v1.js'></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/EaselJS/1.0.2/easeljs.min.js" integrity="sha256-m4ldXda61DCZVuvCEAAZeHlAsDkeMEMtrH68df1sxME=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/plyr/2.0.18/plyr.js" integrity="sha256-d3zbxocNfS7I0jy36Z8prRbhIPcXZabOIJFDpnO2RNs=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/plyr/2.0.18/plyr.css" integrity="sha256-fZCJMY30eNC8ftYfOWmEXhSd41kVy5RDrZOK9dlQnqg=" crossorigin="anonymous" />
         <style>
             #video-container {
                 position:relative;
@@ -16,18 +18,30 @@
                 z-index: 10;
                 /* background-color:rgba(255,0,0,0.5); */
             }
+
+            .plyr {
+                margin-bottom: 55px;
+            }
+
+            .plyr__controls {
+                bottom: -55px !important;
+            }
         </style>
     </head>
     <body>
         <div class="container">
             <h1>Motion Relationship Labelling Task</h1>
+            <p>Please label the motion relationships between the entities in a video</p>
+            <p>You can replay the video as many time as you want.</p>
+            <p><b>Pause the video and hover over the boxes to see the ID</b></p>
+            <p>Leave blank the cell blank if the two objects do not affect each other.</p>
             <div id="video-container">
                 <canvas id="overlay"></canvas>
-                <video id="video" controls src="https://s3.amazonaws.com/amt-motion-relationships/videos/MOT17-09-DPM.mp4" onplay="resize_canvas(this)"></video>
+                <video
+                        id="video"
+                        data-plyr='{ "hideControls": false }'
+                        controls src="https://s3.amazonaws.com/amt-motion-relationships/videos/MOT17-09-DPM.mp4" onplay="resize_canvas(this)"></video>
             </div>
-
-            <p>Please label the motion relationships between the entities in a video</p>
-            <p>Leave blank if two entities have no effect on each other.</p>
 
             <form name='mturk_form' method='post' id='mturk_form' action='https://www.mturk.com/mturk/externalSubmit'>
                 <input type='hidden' value='' name='assignmentId' id='assignmentId'/>
@@ -66,6 +80,15 @@
     </body>
     <script language='Javascript'>turkSetAssignmentID();</script>
     <script type="text/javascript">
+    var players = plyr.setup();
+    // TODO Disallow fullscreen
+
+    document.body.onkeyup = function(e){
+        if(e.keyCode === 32){
+            players[0].togglePlay();
+            e.preventDefault();
+        }
+    };
     var video = document.getElementById('video');
     var canvas = document.getElementById("overlay");
     var lastTime = -1;
@@ -77,6 +100,14 @@
 
     var data = null;
 
+    //Create a stage by getting a reference to the canvas
+    var stage = new createjs.Stage("overlay");
+    stage.enableMouseOver();
+
+    canvas.onclick = function(e) {
+        players[0].togglePlay();
+    };
+
     function resize_canvas(element) {
       var w = element.offsetWidth;
       var h = element.offsetHeight;
@@ -87,29 +118,61 @@
       canvas.height = h;
     }
 
-    //Create a stage by getting a reference to the canvas
-    var stage = new createjs.Stage("overlay");
-
     function drawFrame(frameNumber) {
         var bboxes = data['annotations'][frameNumber];
-        var graphics =  new createjs.Graphics();
 
         stage.removeAllChildren();
-        stage.update();
+
+        if(bboxes === undefined) {
+            console.warn('Bboxes undefined frame number', frameNumber);
+            return
+        }
 
         bboxes.forEach(function(box) {
             var entityId = box[0];
-            var rect = new createjs.Shape()
+            var rect = new createjs.Shape();
+            var x = box[1] * scaleFactor;
+            var y = box[2] * scaleFactor;
+            var width = box[3] * scaleFactor;
+            var height = box[4] * scaleFactor;
             rect.graphics.beginStroke("red").drawRect(
-                box[1] * scaleFactor,
-                box[2] * scaleFactor,
-                box[3] * scaleFactor,
-                box[4] * scaleFactor
+                x,
+                y,
+                width,
+                height
             );
+            var hit = new createjs.Shape();
+            hit.graphics.beginFill("#000").rect(
+                x,
+                y,
+                width,
+                height
+            );
+            rect.hitArea = hit;
             stage.addChild(rect);
+
+            var label = new createjs.Text("ID: " + entityId, "48px Arial", "#42f442");
+            label.x = x;
+            label.y = y - 10 ;
+            label.visible = false;
+            stage.addChild(label);
+
+            rect.on('mouseover', function(event) {
+                label.visible = true;
+                stage.update();
+
+                setTimeout(function() {
+                    stage.removeChild(label);
+                    stage.update();
+                }, 3000);
+            });
+
+            rect.on('mouseout', function(event) {
+                label.visible = false;
+                stage.update();
+            })
         });
 
-        //Update stage will render next frame
         stage.update();
     }
 
