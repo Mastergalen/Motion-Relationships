@@ -92,10 +92,7 @@
     var video = document.getElementById('video');
     var canvas = document.getElementById("overlay");
     var lastTime = -1;
-    // TODO Hardcoded FPS
-    var fps = 30.0;
 
-    var origWidth = 1920;
     var scaleFactor = 1.0;
 
     var data = null;
@@ -112,7 +109,7 @@
       var w = element.offsetWidth;
       var h = element.offsetHeight;
 
-      scaleFactor = w / origWidth;
+      scaleFactor = w / data['width'];
 
       canvas.width = w;
       canvas.height = h;
@@ -179,7 +176,7 @@
     function draw() {
         var time = video.currentTime;
         if (time !== lastTime) {
-            var frame = Math.floor(time * fps);
+            var frame = Math.floor(time * data['frameRate']);
 
             //TODO Fix frames
             frame = Math.floor(frame / 2);
