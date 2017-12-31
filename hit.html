@@ -31,10 +31,18 @@
     <body>
         <div class="container">
             <h1>Motion Relationship Labelling Task</h1>
-            <p>Please label the motion relationships between the entities in a video</p>
-            <p>You can replay the video as many time as you want.</p>
-            <p><b>Pause the video and hover over the boxes to see the ID</b></p>
-            <p>Leave blank the cell blank if the two objects do not affect each other.</p>
+            <p>Please label the motion relationships between the entities in the video</p>
+            <p>You can replay the video as many times as you want.</p>
+
+            <h3>Relationship types explained</h3>
+            <ul>
+                <li>No relationship - the two entities do not affect each other</li>
+                <li>Gives way to - Entity A waits and gives way for entity B to pass</li>
+                <li>Follows - Entity A follows entity B. E.g. a child following its parents.</li>
+                <li>Avoids - Entity A diverts its path to avoid colliding with Entity B</li>
+            </ul>
+
+            <div class="alert alert-info">Pause the video and hover over the boxes to see the ID of the entity</div>
             <div id="video-container">
                 <canvas id="overlay"></canvas>
                 <video
@@ -42,39 +50,107 @@
                         data-plyr='{ "hideControls": false, "fullscreen": false }'
                         controls src="https://s3.amazonaws.com/amt-motion-relationships/videos/MOT17-09-DPM.mp4" onplay="resize_canvas(this)"></video>
             </div>
-
+            <div style="height: 1em"></div>
+            <div class="alert alert-warning">For demonstration purposes, the table assumes there are only 3 unique entities in the video</div>
             <form name='mturk_form' method='post' id='mturk_form' action='https://www.mturk.com/mturk/externalSubmit'>
+                <!-- TODO On hovering over the cell, should highlight the two relevant boxes in the video -->
                 <input type='hidden' value='' name='assignmentId' id='assignmentId'/>
                 <table class="table">
                     <thead>
                         <tr>
-                            <td></td>
-                            <td>1</td>
-                            <td>2</td>
-                            <td>3</td>
+                            <td scope="col">Entity ID</td>
+                            <td scope="col">1</td>
+                            <td scope="col">2</td>
+                            <td scope="col">3</td>
                         </tr>
                     </thead>
                     <tbody>
                     <tr>
                         <td>1</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>
+                            <select name="" id="" class="form-control" disabled>
+                                <option value="">No relationship</option>
+                                <option value="">Gives way to</option>
+                                <option value="">Follows</option>
+                                <option value="">Avoids</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="" id="" class="form-control">
+                                <option value="">No relationship</option>
+                                <option value="">Gives way to</option>
+                                <option value="">Follows</option>
+                                <option value="">Avoids</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="" id="" class="form-control">
+                                <option value="">No relationship</option>
+                                <option value="">Gives way to</option>
+                                <option value="">Follows</option>
+                                <option value="">Avoids</option>
+                            </select>
+                        </td>
                     </tr>
                     <tr>
                         <td>2</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>
+                            <select name="" id="" class="form-control">
+                                <option value="">No relationship</option>
+                                <option value="">Gives way to</option>
+                                <option value="">Follows</option>
+                                <option value="">Avoids</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="" id="" class="form-control" disabled>
+                                <option value="">No relationship</option>
+                                <option value="">Gives way to</option>
+                                <option value="">Follows</option>
+                                <option value="">Avoids</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="" id="" class="form-control">
+                                <option value="">No relationship</option>
+                                <option value="">Gives way to</option>
+                                <option value="">Follows</option>
+                                <option value="">Avoids</option>
+                            </select>
+                        </td>
                     </tr>
                     <tr>
                         <td>3</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>
+                            <select name="" id="" class="form-control">
+                                <option value="">No relationship</option>
+                                <option value="">Gives way to</option>
+                                <option value="">Follows</option>
+                                <option value="">Avoids</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="" id="" class="form-control">
+                                <option value="">No relationship</option>
+                                <option value="">Gives way to</option>
+                                <option value="">Follows</option>
+                                <option value="">Avoids</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="" id="" class="form-control" disabled>
+                                <option value="">No relationship</option>
+                                <option value="">Gives way to</option>
+                                <option value="">Follows</option>
+                                <option value="">Avoids</option>
+                            </select>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
             </form>
         </div>
     </body>
