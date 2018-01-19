@@ -222,7 +222,7 @@
                 stage.update();
 
                 setTimeout(function() {
-                    stage.removeChild(label);
+                    label.visible = false;
                     stage.update();
                 }, 3000);
             });
