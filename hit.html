@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
         <script type='text/javascript' src='https://s3.amazonaws.com/mturk-public/externalHIT_v1.js'></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/EaselJS/1.0.2/easeljs.min.js" integrity="sha256-m4ldXda61DCZVuvCEAAZeHlAsDkeMEMtrH68df1sxME=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/plyr/2.0.18/plyr.js" integrity="sha256-d3zbxocNfS7I0jy36Z8prRbhIPcXZabOIJFDpnO2RNs=" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/plyr/2.0.18/plyr.css" integrity="sha256-fZCJMY30eNC8ftYfOWmEXhSd41kVy5RDrZOK9dlQnqg=" crossorigin="anonymous" />
@@ -142,6 +142,8 @@
             </form>
         </div>
     </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script language='Javascript'>turkSetAssignmentID();</script>
     <script type="text/javascript">
     var players = plyr.setup();
@@ -155,18 +157,60 @@
     var video = document.getElementById('video');
     var canvas = document.getElementById("overlay");
     var lastTime = -1;
-
     var scaleFactor = 1.0;
-
     var data = null;
+    var BoundingBoxes = [];
 
     //Create a stage by getting a reference to the canvas
     var stage = new createjs.Stage("overlay");
     stage.enableMouseOver();
 
+    /* FIXME
     canvas.onclick = function(e) {
         players[0].togglePlay();
     };
+    */
+
+    var dragSelect = {
+        dragging: false,
+        startPoint: null,
+        startId: null,
+        line: new createjs.Shape()
+    }
+    stage.on("stagemousedown", function(evt) {
+        console.log("the canvas was clicked at "+evt.stageX+","+evt.stageY);
+        dragSelect.dragging = true;
+        dragSelect.startPoint = evt;
+        var hitId = hitTestBBox(evt.stageX, evt.stageY);
+
+        stage.addChild(dragSelect.line);
+
+        console.log("Starting ID: " + hitId);
+        dragSelect.startId = hitId;
+    });
+
+    stage.on("stagemousemove", function(evt) {
+        if(!dragSelect.dragging) return;
+
+        dragSelect.line.graphics.clear();
+        dragSelect.line.graphics
+            .setStrokeStyle(3)
+            .beginStroke('#0000FF')
+            .moveTo(dragSelect.startPoint.stageX, dragSelect.startPoint.stageY)
+            .lineTo(evt.stageX, evt.stageY)
+            .endStroke();
+
+        // TODO: Add overlay on hovering
+
+        stage.update();
+    });
+
+    stage.on("stagemouseup", function(evt) {
+        var hitId = hitTestBBox(evt.stageX, evt.stageY);
+        console.log("Start: " + dragSelect.startId + " End ID: " + hitId);
+        var hitId = hitTestBBox(evt.stageX, evt.stageY);
+        dragSelect.dragging = false;
+    });
 
     function resize_canvas(element) {
       var w = element.offsetWidth;
@@ -187,6 +231,8 @@
             console.warn('Bboxes undefined frame number', frameNumber);
             return
         }
+
+        BoundingBoxes = [];
 
         bboxes.forEach(function(box) {
             var entityId = box[0];
@@ -231,9 +277,26 @@
                 label.visible = false;
                 stage.update();
             })
+
+            BoundingBoxes.push({
+                x, y, width, height,
+                id: entityId
+            });
         });
 
+        // TODO: Sort by area of rectangle for z-level
+
         stage.update();
+    }
+
+    function hitTestBBox(stageX, stageY) {
+        console.log(BoundingBoxes);
+        console.log(stageX, stageY);
+        for(let box of BoundingBoxes) {
+            if (stageX >= box.x && stageX <= box.x + box.width && stageY >= box.y && stageY <= box.y + box.height) return box.id;
+        }
+
+        return false;
     }
 
     function draw() {
