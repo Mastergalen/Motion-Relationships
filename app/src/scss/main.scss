@@ -1,0 +1,26 @@
+#annotation-modal {
+  .relationship-selector {
+    text-align: center;
+  }
+
+  .row.select-row {
+    margin-bottom: 1em;
+  }
+
+  .label {
+    height: 3em;
+    text-align: center;
+  }
+
+  .card {
+    :hover {
+      background-color: #dadada;
+    }
+  }
+
+  .card.selected {
+    border: none;
+    outline: 3px solid rgba(9, 32, 207, 0.72);
+    outline-offset: -3px;
+  }
+}

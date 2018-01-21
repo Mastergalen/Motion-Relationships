@@ -3,5 +3,9 @@
     "env": {
         "browser": true,
         "node": true
+    },
+    "rules": {
+        "func-names": "off",
+        "prefer-arrow-callback": "off"
     }
 }

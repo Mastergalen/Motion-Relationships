@@ -4,6 +4,7 @@
         <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
         <script type='text/javascript' src='https://s3.amazonaws.com/mturk-public/externalHIT_v1.js'></script>
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/EaselJS/1.0.2/easeljs.min.js" integrity="sha256-m4ldXda61DCZVuvCEAAZeHlAsDkeMEMtrH68df1sxME=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/plyr/2.0.18/plyr.js" integrity="sha256-d3zbxocNfS7I0jy36Z8prRbhIPcXZabOIJFDpnO2RNs=" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/plyr/2.0.18/plyr.css" integrity="sha256-fZCJMY30eNC8ftYfOWmEXhSd41kVy5RDrZOK9dlQnqg=" crossorigin="anonymous" />
@@ -36,13 +37,13 @@
 
             <h3>Relationship types explained</h3>
             <ul>
-                <li><b>No relationship</b> - the two entities do not affect each other</li>
+                <li><b>No relationship</b> - the two entities do not affect each other. </li>
                 <li><b>Gives way to </b>- Entity A waits and gives way for entity B to pass</li>
                 <li><b>Moves together as a group </b>- Entity A and B move together. E.g. a child following its parents, or a couple walking together.</li>
                 <li><b>Avoids </b>- Entity A diverts its path to avoid colliding with Entity B</li>
             </ul>
 
-            <div class="alert alert-info">Pause the video and hover over the boxes to see the ID of the entity</div>
+            <div class="alert alert-info">Pause the video and hover over the boxes to see the ID of the entity. Drag and drop to select two entities to annotate.</div>
             <div id="video-container">
                 <canvas id="overlay"></canvas>
                 <video
@@ -51,99 +52,31 @@
                         controls src="https://s3.amazonaws.com/amt-motion-relationships/videos/MOT17-09-DPM.mp4"></video>
             </div>
             <div style="height: 1em"></div>
-            <div class="alert alert-warning">For demonstration purposes, the table assumes there are only 3 unique entities in the video</div>
+
+            <h3>Your Annotations</h3>
             <form name='mturk_form' method='post' id='mturk_form' action='https://www.mturk.com/mturk/externalSubmit'>
-                <!-- TODO On hovering over the cell, should highlight the two relevant boxes in the video -->
                 <input type='hidden' value='' name='assignmentId' id='assignmentId'/>
-                <table class="table">
+                
+                <table class="table" id="annotations-container">
                     <thead>
                         <tr>
-                            <td scope="col">Entity ID</td>
-                            <td scope="col">1</td>
-                            <td scope="col">2</td>
-                            <td scope="col">3</td>
+                            <th scope="col">Start ID</th>
+                            <th scope="col">End ID</th>
+                            <th scope="col">Relationship</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
-                    <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>
-                            <select name="" id="" class="form-control" disabled>
-                            </select>
-                        </td>
-                        <td>
-                            <select name="" id="" class="form-control">
-                                <option value="">No relationship</option>
-                                <option value="">Gives way to</option>
-                                <option value="">Moves together as a group</option>
-                                <option value="">Avoids</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select name="" id="" class="form-control">
-                                <option value="">No relationship</option>
-                                <option value="">Gives way to</option>
-                                <option value="">Moves together as a group</option>
-                                <option value="">Avoids</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>
-                            <select name="" id="" class="form-control">
-                                <option value="">No relationship</option>
-                                <option value="">Gives way to</option>
-                                <option value="">Moves together as a group</option>
-                                <option value="">Avoids</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select name="" id="" class="form-control" disabled>
-                            </select>
-                        </td>
-                        <td>
-                            <select name="" id="" class="form-control">
-                                <option value="">No relationship</option>
-                                <option value="">Gives way to</option>
-                                <option value="">Moves together as a group</option>
-                                <option value="">Avoids</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>
-                            <select name="" id="" class="form-control">
-                                <option value="">No relationship</option>
-                                <option value="">Gives way to</option>
-                                <option value="">Moves together as a group</option>
-                                <option value="">Avoids</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select name="" id="" class="form-control">
-                                <option value="">No relationship</option>
-                                <option value="">Gives way to</option>
-                                <option value="">Moves together as a group</option>
-                                <option value="">Avoids</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select name="" id="" class="form-control" disabled>
-                            </select>
-                        </td>
-                    </tr>
-                    </tbody>
+                    <tbody></tbody>
                 </table>
+                
                 <div class="form-group">
+                    <!-- TODO Do not allow zero annotations -->
                     <button class="btn btn-primary" type="submit">Submit</button>
                 </div>
             </form>
         </div>
+
+        <div id="annotation-popup"></div>
     </body>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script language='Javascript'>turkSetAssignmentID();</script>
-    <script type="text/javascript" src="bundle.js"></script>
 </html>
