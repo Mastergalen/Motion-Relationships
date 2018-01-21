@@ -6,7 +6,14 @@
         {{endId}}
     </td>
     <td>
-        {{relationship}}
+        <div class="form-group">
+            <select name="" class="form-control">
+                <option value="no-relationship">No relationship</option>
+                <option value="gives-way">Gives way to</option>
+                <option value="group">Moves together as group</option>
+                <option value="avoids">Avoids</option>
+            </select>
+        </div>
     </td>
     <td>
         <button type="button" class="btn btn-danger btn-delete"><i class="fas fa-trash"></i></button>

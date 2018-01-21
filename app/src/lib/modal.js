@@ -33,13 +33,16 @@ function createModal(startId, endId) {
 
     modal.modal('hide');
 
-    const rowHtml = rowTemplate({
+    const $rowHtml = $(rowTemplate({
       startId,
       endId,
       relationship,
-    });
+    }));
 
-    $('#annotations-container tbody').append(rowHtml);
+    // Set the selected option as active
+    $rowHtml.find('select').val(relationship);
+
+    $('#annotations-container tbody').prepend($rowHtml);
   });
 }
 
