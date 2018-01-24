@@ -31,25 +31,24 @@
             <p><span id="video-current">0</span> out of <span id="video-total"></span> videos</p>
             <p>Source <span id="video-url"></span></p>
             <div class="row justify-content-center" id="video" data-video-id="W2wiPaNESvM">
-              <iframe width="560" height="315" src="https://www.youtube.com/embed/W2wiPaNESvM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            </div>
+              <div class="col">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/W2wiPaNESvM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
-            <div class="row mt-1">
-              <div class="col text-center">
-                  <button type="button" class="btn btn-success" id="btn-yes" disabled>Yes</button>
-                  <button type="button" class="btn btn-danger" id="btn-no" disabled>No</button>
+                <div class="text-center mt-1">
+                    <button type="button" class="btn btn-success" id="btn-yes" disabled>Yes</button>
+                    <button type="button" class="btn btn-danger" id="btn-no" disabled>No</button>
+                </div>
               </div>
-            </div>
-
-            <div class="row">
-              <h2>Annotations</h2>
-              <table class="table" id="annotations">
-                <thead>
-                  <th>Timestamp</th>
-                  <th>Class Name</th>
-                </thead>
-                <tbody></tbody>
-              </table>
+              <div class="col">
+                <h2>Annotations</h2>
+                <table class="table" id="annotations">
+                  <thead>
+                    <th>Timestamp</th>
+                    <th>Class Name</th>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
             </div>
         </div>
     </body>

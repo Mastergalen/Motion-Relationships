@@ -84,5 +84,5 @@ function updateVideo(videoNo) {
 function writeWideo(videoId, status) {
   let classesInVideo = _.map(annotations[videoId], 'class_name');
   classesInVideo = _.uniq(classesInVideo);
-  fs.appendFileSync('approvedVideos.csv', `${videoId},${status},${currentVideo},${classesInVideo.join('|')},${new Date().toISOString()}\n`);
+  fs.appendFileSync('reviewedVideos.csv', `${videoId},${status},${currentVideo},${classesInVideo.join('|')},${new Date().toISOString()}\n`);
 }
