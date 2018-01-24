@@ -1,0 +1,22 @@
+{
+  "name": "video-filter-tool",
+  "version": "1.0.0",
+  "description": "Quick and dirty Electron app to make manually reviewing videos easier",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "Electron",
+    "quick"
+  ],
+  "author": "Galen Han",
+  "devDependencies": {
+    "electron": "~1.7.8"
+  },
+  "dependencies": {
+    "jquery": "^3.3.1",
+    "lodash": "^4.17.4",
+    "papaparse": "^4.3.6"
+  }
+}

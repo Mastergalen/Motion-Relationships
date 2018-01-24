@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
+        <style>
+            #video-container {
+                position:relative;
+            }
+            #overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 10;
+                /* background-color:rgba(255,0,0,0.5); */
+            }
+
+            .plyr {
+                margin-bottom: 55px;
+            }
+
+            .plyr__controls {
+                bottom: -55px !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Video Filter Tool</h1>
+            <p><span id="video-current">0</span> out of <span id="video-total"></span> videos</p>
+            <p>Source <span id="video-url"></span></p>
+            <div class="row justify-content-center" id="video" data-video-id="W2wiPaNESvM">
+              <iframe width="560" height="315" src="https://www.youtube.com/embed/W2wiPaNESvM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+
+            <div class="row mt-1">
+              <div class="col text-center">
+                  <button type="button" class="btn btn-success" id="btn-yes" disabled>Yes</button>
+                  <button type="button" class="btn btn-danger" id="btn-no" disabled>No</button>
+              </div>
+            </div>
+
+            <div class="row">
+              <h2>Annotations</h2>
+              <table class="table" id="annotations">
+                <thead>
+                  <th>Timestamp</th>
+                  <th>Class Name</th>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+        </div>
+    </body>
+    <script>
+      // You can also require other files to run in this process
+      window.$ = window.jQuery = require('jquery');
+      require('./renderer.js')
+    </script>
+</html>
