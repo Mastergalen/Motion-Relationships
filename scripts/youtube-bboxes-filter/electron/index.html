@@ -1,60 +1,109 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
-        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
-        <style>
-            #video-container {
-                position:relative;
-            }
-            #overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                z-index: 10;
-                /* background-color:rgba(255,0,0,0.5); */
-            }
+<head>
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
+  <style>
+    #video-container {
+      position:relative;
+    }
+    #overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 10;
+      /* background-color:rgba(255,0,0,0.5); */
+    }
+    
+    .plyr {
+      margin-bottom: 55px;
+    }
+    
+    .plyr__controls {
+      bottom: -55px !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Video Filter Tool</h1>
+    <p><span id="video-current">0</span> out of <span id="video-total"></span> videos</p>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text">Jump to</span>
+      </div>
+      <input type="text" class="form-control" id="input-video">
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" id="btn-video-go" disabled>Go</button>
+      </div>
+    </div>
+    <p>Source <span id="video-url"></span></p>
+    <div class="row justify-content-center" id="video" data-video-id="W2wiPaNESvM">
+      <div class="col">
+        <div id="player"></div>
+        
+        <div class="text-center mt-1">
+          <button type="button" class="btn btn-success" id="btn-yes" disabled>Yes</button>
+          <button type="button" class="btn btn-danger" id="btn-no" disabled>No</button>
 
-            .plyr {
-                margin-bottom: 55px;
-            }
-
-            .plyr__controls {
-                bottom: -55px !important;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Video Filter Tool</h1>
-            <p><span id="video-current">0</span> out of <span id="video-total"></span> videos</p>
-            <p>Source <span id="video-url"></span></p>
-            <div class="row justify-content-center" id="video" data-video-id="W2wiPaNESvM">
-              <div class="col">
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/W2wiPaNESvM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-
-                <div class="text-center mt-1">
-                    <button type="button" class="btn btn-success" id="btn-yes" disabled>Yes</button>
-                    <button type="button" class="btn btn-danger" id="btn-no" disabled>No</button>
+          <div class="form-row mt-1">
+            <div class="col">
+              <div class="input-group">
+                <input type="text" class="form-control" name="start" placeholder="Start">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary btn-set-time" type="button" disabled>Set to current time</button>
                 </div>
               </div>
-              <div class="col">
-                <h2>Annotations</h2>
-                <table class="table" id="annotations">
-                  <thead>
-                    <th>Timestamp</th>
-                    <th>Class Name</th>
-                  </thead>
-                  <tbody></tbody>
-                </table>
+            </div>
+  
+            <div class="col">
+              <div class="input-group">
+                <input type="text" class="form-control" name="end" placeholder="End">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary btn-set-time" type="button" disabled>Set to current time</button>
+                </div>
               </div>
             </div>
+          </div>
+
+          <p>Current time: <span id="current-time"></span></p>
         </div>
-    </body>
-    <script>
-      // You can also require other files to run in this process
-      window.$ = window.jQuery = require('jquery');
-      require('./renderer.js')
-    </script>
+      </div>
+      <div class="col">
+        <h2>Annotations</h2>
+        <table class="table" id="annotations">
+          <thead>
+            <th>Timestamp</th>
+            <th>Class Name</th>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="https://www.youtube.com/iframe_api" type="text/javascript"></script>
+<script>
+  // You can also require other files to run in this process
+  window.$ = window.jQuery = require('jquery');
+  
+  function onYouTubeIframeAPIReady() {
+    window.player = new YT.Player('player', {
+      videoId: '-2jT03Kh1U4',
+      events: {
+        //'onReady': onPlayerReady,
+        //'onStateChange': onPlayerStateChange
+      },
+      playerVars: {rel: 0},
+    });
+  }
+  
+  
+  function onPlayerReady(event) {
+    event.target.playVideo();
+  }
+  
+  require('./renderer.js')
+</script>
 </html>
