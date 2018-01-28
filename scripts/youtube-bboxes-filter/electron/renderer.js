@@ -1,14 +1,17 @@
 const Papa = require('papaparse');
 const fs = require("fs");
 const _ = require('lodash');
+const { Set } = require('immutable')
 
 const $video = $('#video');
 const $annotations = $('#annotations');
 
-let stream = fs.createReadStream('../filtered_videos.csv');
+let stream = fs.createReadStream('../videos_with_cars.csv');
 let allVideosStream = fs.createReadStream('../multi.csv');
+let reviewedVideosStream = fs.createReadStream('reviewedVideos.csv');
 
 let videos = [];
+let reviewedVideos = null;
 let annotations = null;
 let currentVideo = 0;
 
@@ -27,6 +30,18 @@ function loadData() {
       Papa.parse(allVideosStream, {
         complete: function(results) {
           annotations = _.groupBy(results.data, 'youtube_id');
+          resolve();
+        },
+        header: true
+      });
+    });
+  }).then(() => {
+    return new Promise((resolve, reject) => {
+      Papa.parse(reviewedVideosStream, {
+        complete: function(results) {
+          let ids = _.map(results.data, 'youtube_id');
+          reviewedVideos = Set(ids);
+          console.log(reviewedVideos);
           resolve();
         },
         header: true
@@ -95,12 +110,31 @@ function nextVideo() {
   setVideo(currentVideo)
 }
 
+function isVideoReviewed(videoId) {
+  console.log(reviewedVideos);
+  return reviewedVideos.has(videoId);
+}
+
 function setVideo(videoNo) {
   currentVideo = videoNo;
+
+  if(videoNo >= videos.length) {
+    alert('No more videos to review');
+    return;
+  }
+
   const vid = videos[videoNo];
-  $('#video-current').html(currentVideo);
 
   const videoId = vid['youtube_id'];
+
+  if(isVideoReviewed(videoId)) {
+    console.log("Skipping", videoId);
+    nextVideo();
+    return;
+  }
+
+  $('#video-current').html(currentVideo);
+
   // Update iframe
   $video.data('video-id', videoId);
   
