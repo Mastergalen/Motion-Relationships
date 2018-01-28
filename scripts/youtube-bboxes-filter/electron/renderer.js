@@ -6,8 +6,8 @@ const { Set } = require('immutable')
 const $video = $('#video');
 const $annotations = $('#annotations');
 
-let stream = fs.createReadStream('../videos_with_cars.csv');
-let allVideosStream = fs.createReadStream('../multi.csv');
+let toReviewStream = fs.createReadStream('../videos_with_cars.csv');
+let annotationsStream = fs.createReadStream('../videos_with_cars_annotations.csv');
 let reviewedVideosStream = fs.createReadStream('reviewedVideos.csv');
 
 let videos = [];
@@ -17,7 +17,7 @@ let currentVideo = 0;
 
 function loadData() {
   return new Promise((resolve, reject) => {
-    Papa.parse(stream, {
+    Papa.parse(toReviewStream, {
       complete: function(results) {
         videos = results.data;
         $('#video-total').html(videos.length);
@@ -27,7 +27,7 @@ function loadData() {
     });
   }).then(() => {
     return new Promise((resolve, reject) => {
-      Papa.parse(allVideosStream, {
+      Papa.parse(annotationsStream, {
         complete: function(results) {
           annotations = _.groupBy(results.data, 'youtube_id');
           resolve();
@@ -41,7 +41,6 @@ function loadData() {
         complete: function(results) {
           let ids = _.map(results.data, 'youtube_id');
           reviewedVideos = Set(ids);
-          console.log(reviewedVideos);
           resolve();
         },
         header: true
@@ -111,7 +110,6 @@ function nextVideo() {
 }
 
 function isVideoReviewed(videoId) {
-  console.log(reviewedVideos);
   return reviewedVideos.has(videoId);
 }
 
