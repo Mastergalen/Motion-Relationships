@@ -1,3 +1,4 @@
 futures
 youtube-dl
 ffmpy
+filterpy
