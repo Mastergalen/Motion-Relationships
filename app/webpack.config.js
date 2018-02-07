@@ -1,4 +1,5 @@
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -7,10 +8,15 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
-  plugins: [new HtmlWebpackPlugin({
-    filename: 'hit.html',
-    template: 'hit.html',
-  })],
+  plugins: [
+    new HtmlWebpackPlugin({
+      filename: 'hit.html',
+      template: 'hit.html',
+    }),
+    new CopyWebpackPlugin([
+      { from: '../test-videos', to: 'videos' },
+    ]),
+  ],
   module: {
     rules: [
       { test: /\.handlebars$/, loader: 'handlebars-loader' },

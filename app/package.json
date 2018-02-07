@@ -16,6 +16,7 @@
     "build": "webpack --devtool source-map --watch"
   },
   "devDependencies": {
+    "copy-webpack-plugin": "^4.3.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
     "html-webpack-plugin": "^2.30.1",

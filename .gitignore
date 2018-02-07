@@ -6,6 +6,9 @@ bin/
 
 app/dist/
 
+test-videos/*
+!test-videos/.gitkeep
+
 **/*/node_modules/
 
 # Byte-compiled / optimized / DLL files

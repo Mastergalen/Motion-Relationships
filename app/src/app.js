@@ -20,7 +20,7 @@ document.body.onkeyup = (e) => {
 
 // TODO Do not enable play button until videoData is loaded
 
-fetch('https://s3.amazonaws.com/amt-motion-relationships/videos/-3K26M-m_00.json').then(res => res.json()).then((json) => {
+fetch('videos/-3K26M-m_00.json').then(res => res.json()).then((json) => {
   const videoData = json;
   startDrawingOverlay(videoData);
 });
