@@ -19,14 +19,6 @@ def load_bboxes():
 
 bboxes = load_bboxes()
 
-# tracker = []
-# 
-# for i, val in enumerate(bboxes[0]):
-#     tracker.append([val])
-# 
-# for i in range(1, len(bboxes)):
-#     match_detections_tracker(tracker, bboxes[i])
-
 tracker = Sort()
 
 bbox_annotations = []

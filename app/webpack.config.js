@@ -11,7 +11,11 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       filename: 'hit.html',
-      template: 'hit.html',
+      template: 'src/hit.html',
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'bbox-debugger.html',
+      template: 'src/bbox-debugger.html',
     }),
     new CopyWebpackPlugin([
       { from: '../test-videos', to: 'videos' },
