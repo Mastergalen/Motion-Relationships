@@ -1,9 +1,29 @@
+These scripts do all the preprocessing needed before videos are ready for annotation.
 
-## Detectron
+## Installation
 
-### Inference
+```
+cd ~
+pip3 install -r requirements.txt
+sudo apt-get install ffmpeg python3-tk
+git clone git@github.com:Mastergalen/Detectron.git my-detectron
+```
 
-https://github.com/Mastergalen/Detectron
+## Download YouTube Videos
+
+Run this script to download all 5s clips specified in `videos_to_annotate.csv` into the `./downloads` folder.
+
+```
+python3 download_youtube.py
+```
+
+## Run Detectron
+
+```
+python3 bounding_box_generator.py
+```
+
+### Manual Inference
 
 ```
 python2 tools/infer_simple.py \
