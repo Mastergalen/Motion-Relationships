@@ -2,45 +2,85 @@
 Generate bounding boxes using Detectron
 """
 import cv2
+import glob
+import json
 import os
 import shutil
+import subprocess
+import logging
+from pathlib import Path
+from lib.tracker import apply_tracker
+from pdb import set_trace
 
 directory = 'downloads'
 tmpDirectory = 'tmp'
 
-def generate_images(filepath):
-    vidcap = cv2.VideoCapture(filepath)
+def generate_images(vidcap):
+    length = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
+    digits = len(str(length))
 
     success,image = vidcap.read()
 
     count = 0
     while success:
-        cv2.imwrite(tmpDirectory + "/frame_%d.jpg" % count, image)     # save frame as JPEG file
-        if cv2.waitKey(10) == 27:                     # exit if Escape is hit
-            break
+        cv2.imwrite(
+            "{}/frame_{number:0{width}d}.jpg".format(tmpDirectory, number=count, width=digits),
+            image
+        )
         count += 1
         success,image = vidcap.read()
 
-def identify_bounding_boxes():
-    # TODO
-    pass
+def generate_bounding_boxes():
+    """
+    Takes .jpg frames of video in ./tmp folder and applies bounding box detections.
+    Results are written to './tmp/bboxes.json'
+    """
+    print('Applying detectron')
+    detectron_dir = os.path.join(str(Path.home()), 'my-detectron')
+    subprocess.run([
+        "python2", os.path.join(detectron_dir, "tools/infer_simple.py"),
+        "--cfg",
+        os.path.join(
+            detectron_dir,
+            "configs/12_2017_baselines/e2e_mask_rcnn_X-101-32x8d-FPN_1x.yaml"
+        ),
+        "--output-dir", "tmp",
+        "--image-ext", "jpg",
+        "--wts",
+        "https://s3-us-west-2.amazonaws.com/detectron/36761843/12_2017_baselines/e2e_mask_rcnn_X-101-32x8d-FPN_1x.yaml.06_35_59.RZotkLKI/output/train/coco_2014_train%3Acoco_2014_valminusminival/generalized_rcnn/model_final.pkl",
+        "tmp"
+    ], check=True, stdout=subprocess.DEVNULL)
 
-for filename in os.listdir(directory):
-    if filename.endswith(".mp4"): 
-        print("Processing {}".format(filename))
-        filepath = os.path.join(directory, filename)
+vid_list = glob.glob("{}/*.mp4".format(directory))
+total_videos = len(vid_list)
 
-        if not os.path.exists(tmpDirectory):
-            os.makedirs(tmpDirectory)
+for i, file_path in enumerate(vid_list):
+    file_name = os.path.basename(file_path)
+    print("Processing {} | {}/{}".format(file_name, i, total_videos))
+    youtube_id = file_name.split('.')[0]
 
-        generate_images(filepath)
+    if not os.path.exists(tmpDirectory):
+        os.makedirs(tmpDirectory)
 
-        identify_bounding_boxes()
+    vidcap = cv2.VideoCapture(file_path)
 
-        shutil.rmtree(tmpDirectory) 
-    
-    else:
-        continue
+    # Writes image frames in ./tmp
+    generate_images(vidcap)
 
-    # TODO Remove break
-    break
+    # Takes image frames in ./tmp and writes a bounding box file ./tmp/bbox.json
+    generate_bounding_boxes()
+
+    # Apply tracker
+    tracker_annotations = apply_tracker('./tmp/boxes.json')
+
+    output_path = 'downloads/{}.json'.format(youtube_id)
+    with open(output_path, 'w') as out:
+        json.dump({
+            'frameRate': vidcap.get(cv2.CAP_PROP_FPS),
+            'totalFrames': 149,
+            'width': int(vidcap.get(3)),
+            'height': int(vidcap.get(4)),
+            'annotations': tracker_annotations
+        }, out, indent=4)
+
+    shutil.rmtree(tmpDirectory) 
