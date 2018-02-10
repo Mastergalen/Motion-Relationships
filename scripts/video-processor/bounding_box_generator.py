@@ -4,10 +4,11 @@ Generate bounding boxes using Detectron
 import cv2
 import glob
 import json
+import logging
 import os
 import shutil
 import subprocess
-import logging
+import time
 from pathlib import Path
 from lib.tracker import apply_tracker
 from pdb import set_trace
@@ -55,10 +56,16 @@ vid_list = glob.glob("{}/*.mp4".format(directory))
 total_videos = len(vid_list)
 
 for i, file_path in enumerate(vid_list):
+    start = time.time()
     file_name = os.path.basename(file_path)
-    print("Processing {} | {}/{}".format(file_name, i, total_videos))
     youtube_id = file_name.split('.')[0]
-
+    annotation_path = os.path.join(directory, "{}.json".format(youtube_id))
+    if os.path.isfile(annotation_path):
+        print('Already processed {}, skipping'.format(youtube_id))
+        continue
+    else:
+        print("Processing {} | {}/{}".format(file_name, i, total_videos))
+    
     if not os.path.exists(tmpDirectory):
         os.makedirs(tmpDirectory)
 
@@ -73,8 +80,7 @@ for i, file_path in enumerate(vid_list):
     # Apply tracker
     tracker_annotations = apply_tracker('./tmp/boxes.json')
 
-    output_path = 'downloads/{}.json'.format(youtube_id)
-    with open(output_path, 'w') as out:
+    with open(annotation_path, 'w') as out:
         json.dump({
             'frameRate': vidcap.get(cv2.CAP_PROP_FPS),
             'totalFrames': 149,
@@ -83,4 +89,8 @@ for i, file_path in enumerate(vid_list):
             'annotations': tracker_annotations
         }, out, indent=4)
 
-    shutil.rmtree(tmpDirectory) 
+    shutil.rmtree(tmpDirectory)
+
+    total = time.time() - start
+
+    print('Finished processing {}. Time: {}'.format(youtube_id, total))
