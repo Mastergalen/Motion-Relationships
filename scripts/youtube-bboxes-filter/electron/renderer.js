@@ -90,6 +90,11 @@ $('#btn-video-go').click(function() {
   setVideo(parseInt(videoNo));
 });
 
+$('#btn-youtube-id').click(function() {
+  const youtubeId = $('#input-youtube-id').val()
+  setVideoById(youtubeId);
+});
+
 $('button.btn-set-time').click(function() {
   let timestamp = player.getCurrentTime();
   console.log('setting to', timestamp);
@@ -133,18 +138,26 @@ function setVideo(videoNo) {
 
   $('#video-current').html(currentVideo);
 
+  setVideoById(videoId);
+}
+
+function setVideoById(youtubeId) {
   // Update iframe
-  $video.data('video-id', videoId);
+  $video.data('video-id', youtubeId);
   
-  player.loadVideoById(videoId);
-  $('#video-url').html(`https://www.youtube.com/watch?v=${videoId}`);
+  player.loadVideoById(youtubeId);
+  $('#video-url').html(`https://www.youtube.com/watch?v=${youtubeId}`);
 
   $annotations.find('tbody').empty();
 
   $('input[name="start"]').val("");
   $('input[name="end"]').val("");
 
-  for(let row of annotations[videoId]) {
+  if(annotations[youtubeId] === undefined) {
+    return;
+  }
+
+  for(let row of annotations[youtubeId]) {
     $annotations.find('tbody').append(`<tr>
       <td>${row['timestamp_ms']}</td>
       <td>${row['class_name']}</td>
