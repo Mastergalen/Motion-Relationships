@@ -159,10 +159,8 @@ function drawFrame(frameNumber) {
 function draw() {
   const time = video.currentTime;
   if (time !== lastTime) {
-    let frame = Math.floor(time * videoData.frameRate);
+    const frame = Math.floor(time * videoData.frameRate);
 
-    // TODO Fix frames
-    frame = Math.floor(frame / 2);
     drawFrame(frame);
 
     lastTime = time;
