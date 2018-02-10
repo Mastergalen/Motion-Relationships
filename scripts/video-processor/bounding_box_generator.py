@@ -83,7 +83,7 @@ for i, file_path in enumerate(vid_list):
     with open(annotation_path, 'w') as out:
         json.dump({
             'frameRate': vidcap.get(cv2.CAP_PROP_FPS),
-            'totalFrames': 149,
+            'totalFrames': int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT)),
             'width': int(vidcap.get(3)),
             'height': int(vidcap.get(4)),
             'annotations': tracker_annotations
