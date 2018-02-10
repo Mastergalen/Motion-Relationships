@@ -1,4 +1,5 @@
 import createModal from './modal';
+const toastr = require('toastr');
 
 const video = document.getElementById('video');
 const canvas = document.getElementById('overlay');
@@ -70,18 +71,31 @@ stage.on('stagemousemove', (evt) => {
     .lineTo(evt.stageX, evt.stageY)
     .endStroke();
 
-  // TODO: Add overlay on hovering
-
   stage.update();
 });
 
 stage.on('stagemouseup', (evt) => {
   const hitId = hitTestBBox(evt.stageX, evt.stageY);
-  console.log(`Start: ${dragSelect.startId} End ID: ${hitId}`);
   dragSelect.dragging = false;
 
-  // TODO: Ignore accidental clicks
-  // TODO: Ignore identical start and ends
+  const dragDistance = Math.sqrt(((dragSelect.startPoint.stageX - evt.stageX) ** 2) +
+  ((dragSelect.startPoint.stageY - evt.stageY) ** 2));
+
+  // Ignore accidental clicks
+  if (dragDistance < 1.0) return;
+
+  console.log(`Start: ${dragSelect.startId} End ID: ${hitId}`);
+
+  // Ignore identical start and ends
+  if (dragSelect.startId === hitId) {
+    toastr.error('No need to annotate the relationship with itself, instead try drawing a line betwen two different objects in red boxes.');
+    return;
+  }
+
+  if (dragSelect.startId === false || hitId === false) {
+    toastr.error('Oops, looks like you did not draw a line between two objects which are in a red box.');
+    return;
+  }
 
   createModal(dragSelect.startId, hitId);
 });

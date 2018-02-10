@@ -1,9 +1,11 @@
 import 'bootstrap';
+import { Map } from 'immutable';
 import './scss/main.scss';
 import { startDrawingOverlay } from './lib/overlay';
 import './lib/annotations-table';
 
 const players = plyr.setup();
+global.annotationMap = Map();
 
 document.body.onkeydown = (e) => {
   if (e.keyCode === 32) {

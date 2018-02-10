@@ -9,7 +9,8 @@ function createModal(startId, endId) {
     endId,
   });
 
-  // TODO: Check if pair already annotated and pre-select
+  
+  const $old = global.annotationMap.get(`${startId}:${endId}`);
 
   const element = document.getElementById('annotation-popup');
 
@@ -20,6 +21,13 @@ function createModal(startId, endId) {
 
   const submitButton = $('#annotation-modal button[type="submit"]');
   submitButton.prop('disabled', true);
+
+  // Check if pair is already annotated and pre-select
+  if ($old !== undefined) {
+    const oldRelationship = $old.row.find('select').val();
+    modal.find(`.card[data-value='${oldRelationship}']`).addClass('selected');
+    submitButton.prop('disabled', false);
+  }
 
   $('#annotation-modal .card').click(function () {
     $('#annotation-modal .card').removeClass('selected');
@@ -33,16 +41,29 @@ function createModal(startId, endId) {
 
     modal.modal('hide');
 
-    const $rowHtml = $(rowTemplate({
+    if ($old !== undefined) {
+      // Update old row in DOM
+      $old.row.find('select').val(relationship);
+      global.annotationMap = global.annotationMap.set(`${startId}:${endId}`, {
+        row: $old.row,
+      });
+      return;
+    }
+
+    const $row = $(rowTemplate({
       startId,
       endId,
       relationship,
     }));
 
     // Set the selected option as active
-    $rowHtml.find('select').val(relationship);
+    $row.find('select').val(relationship);
 
-    $('#annotations-container tbody').prepend($rowHtml);
+    $row.prependTo('#annotations-container tbody');
+
+    global.annotationMap = global.annotationMap.set(`${startId}:${endId}`, {
+      row: $row,
+    });
   });
 }
 
