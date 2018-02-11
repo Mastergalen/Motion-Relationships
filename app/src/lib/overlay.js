@@ -1,6 +1,7 @@
-import createModal from './modal';
+import _ from 'lodash';
+import toastr from 'toastr';
 
-const toastr = require('toastr');
+import createModal from './modal';
 
 const video = document.getElementById('video');
 const canvas = document.getElementById('overlay');
@@ -33,7 +34,8 @@ video.onplay = () => {
 
 
 function hitTestBBox(stageX, stageY) {
-  for (const box of BoundingBoxes) {
+  // Reverse order of BoundingBoxes, to get smallest box first
+  for (const box of _.reverse(BoundingBoxes)) {
     if (stageX >= box.x &&
       stageX <= box.x + box.width &&
       stageY >= box.y &&
@@ -102,7 +104,7 @@ stage.on('stagemouseup', (evt) => {
 });
 
 function drawFrame(frameNumber) {
-  const bboxes = videoData.annotations[frameNumber];
+  let bboxes = videoData.annotations[frameNumber];
 
   stage.removeAllChildren();
 
@@ -112,6 +114,9 @@ function drawFrame(frameNumber) {
   }
 
   BoundingBoxes = [];
+
+  // Sort by area of rectangle to minimise occlusion
+  bboxes = _.reverse(_.sortBy(bboxes, el => el[3] * el[4]));
 
   bboxes.forEach((box) => {
     const entityId = box[0];
@@ -165,8 +170,6 @@ function drawFrame(frameNumber) {
       id: entityId,
     });
   });
-
-  // TODO: Sort by area of rectangle for z-level
 
   stage.update();
 }

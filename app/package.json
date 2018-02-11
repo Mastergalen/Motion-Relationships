@@ -11,6 +11,7 @@
     "handlebars-loader": "^1.6.0",
     "immutable": "^3.8.2",
     "jquery": "^3.3.0",
+    "lodash": "^4.17.5",
     "popper.js": "^1.12.9",
     "toastr": "^2.1.4"
   },
