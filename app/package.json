@@ -15,7 +15,8 @@
     "toastr": "^2.1.4"
   },
   "scripts": {
-    "build": "webpack --devtool source-map --watch"
+    "build": "webpack --devtool source-map --watch",
+    "lint": "eslint --fix ./src"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^4.3.1",

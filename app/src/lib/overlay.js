@@ -1,4 +1,5 @@
 import createModal from './modal';
+
 const toastr = require('toastr');
 
 const video = document.getElementById('video');

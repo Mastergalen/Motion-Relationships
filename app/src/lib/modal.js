@@ -9,7 +9,7 @@ function createModal(startId, endId) {
     endId,
   });
 
-  
+
   const $old = global.annotationMap.get(`${startId}:${endId}`);
 
   const element = document.getElementById('annotation-popup');
