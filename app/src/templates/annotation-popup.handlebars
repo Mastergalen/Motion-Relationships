@@ -11,23 +11,35 @@
                 <p>Label the relationship between <b>{{startId}}</b> and <b>{{endId}}</b></p>
                 <div class="container-fluid relationship-selector">
                     <div class="row select-row">
-                        <div class="col-md-6">
-                            <div class="card" data-value="no-relationship">
+                        <div class="col-md-4">
+                            <div class="card" data-value="group">
                                 <div class="card-body">
                                     <div>
-                                        <i class="far fa-circle fa-6x"></i>
+                                        <i class="fas fa-users fa-4x"></i>
                                     </div>
                                     <div class="label d-flex align-items-center justify-content-center">
-                                        No relationship
+                                        Moves together as a group
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <div class="card" data-value="avoids">
+                                <div class="card-body">
+                                    <div>
+                                        <i class="fas fa-retweet fa-4x"></i>
+                                    </div>
+                                    <div class="label d-flex align-items-center justify-content-center">
+                                        Avoids
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
                             <div class="card" data-value="gives-way">
                                 <div class="card-body">
                                     <div>
-                                        <i class="fas fa-hand-paper fa-6x"></i>
+                                        <i class="fas fa-hand-paper fa-4x"></i>
                                     </div>
                                     <div class="label d-flex align-items-center justify-content-center">
                                         Gives way to
@@ -36,27 +48,27 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row select-row">
                         <div class="col-md-6">
-                            <div class="card" data-value="group">
+                            <div class="card" data-value="no-relationship">
                                 <div class="card-body">
                                     <div>
-                                        <i class="fas fa-users fa-6x"></i>
+                                        <i class="far fa-circle fa-4x"></i>
                                     </div>
                                     <div class="label d-flex align-items-center justify-content-center">
-                                        Moves together as a group
+                                        No relationship
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="card" data-value="avoids">
+                            <div class="card" data-value="unsure">
                                 <div class="card-body">
                                     <div>
-                                        <i class="fas fa-retweet fa-6x"></i>
+                                        <i class="fas fa-question fa-4x"></i>
                                     </div>
                                     <div class="label d-flex align-items-center justify-content-center">
-                                        Avoids
+                                        Unsure
                                     </div>
                                 </div>
                             </div>
