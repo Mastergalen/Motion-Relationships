@@ -89,14 +89,14 @@ stage.on('stagemouseup', (evt) => {
 
   console.log(`Start: ${dragSelect.startId} End ID: ${hitId}`);
 
-  // Ignore identical start and ends
-  if (dragSelect.startId === hitId) {
-    toastr.error('No need to annotate the relationship with itself, instead try drawing a line betwen two different objects in red boxes.');
+  if (dragSelect.startId === false || hitId === false) {
+    toastr.error('Oops, looks like you did not draw a line between two objects which are in a red box.');
     return;
   }
 
-  if (dragSelect.startId === false || hitId === false) {
-    toastr.error('Oops, looks like you did not draw a line between two objects which are in a red box.');
+  // Ignore identical start and ends
+  if (dragSelect.startId === hitId) {
+    toastr.error('No need to annotate the relationship with itself, instead try drawing a line betwen two different objects in red boxes.');
     return;
   }
 
