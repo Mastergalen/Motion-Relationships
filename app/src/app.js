@@ -23,6 +23,7 @@ if (youtubeId === null) {
 }
 
 $('#assignmentId').val(qs('assignmentId'));
+$('#videoId').val(youtubeId);
 const submitUrl = `${qs('turkSubmitTo')}/mturk/externalSubmit`;
 $('#mturk_form').attr('action', submitUrl);
 
