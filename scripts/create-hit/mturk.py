@@ -1,5 +1,6 @@
 import boto3
 import os
+import random
 from dotenv import load_dotenv
 
 region_name = 'us-east-1'
@@ -21,17 +22,28 @@ def create_hit(videoId, isProduction):
 
     endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
     master_qualification_id = '2ARFPLSP75KLA8M8DH1HTEQVJT3SY6'
+    qualification_requirements = []
+    # In sandbox mode, allow duplicate HITs
+    unique_token = videoId + str(random.randint(0,10000))
 
     if isProduction:
         endpoint_url = 'https://mturk-requester.us-east-1.amazonaws.com'
         master_qualification_id = '2F1QJWKUDD8XADTFD2Q0G6UTO95ALH'
+        qualification_requirements = [
+            {
+                'QualificationTypeId': master_qualification_id,
+                'Comparator': 'Exists',
+                'RequiredToPreview': False
+            },
+        ]
+        unique_token = videoId
         
     client = create_client(endpoint_url)
 
     external_question = """
     <ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">
     <ExternalURL>{}?video={}</ExternalURL>
-    <FrameHeight>400</FrameHeight>
+    <FrameHeight>800</FrameHeight>
     </ExternalQuestion>
     """.format(external_url, videoId)
 
@@ -46,14 +58,8 @@ def create_hit(videoId, isProduction):
         Description='Your task is to label the relationships between moving objects in a short 5s video, out of 5 choices.',
         Question=external_question,
         RequesterAnnotation="By Galen Han (galen.han.14@ucl.ac.uk) | Video ID: {}".format(videoId),
-        QualificationRequirements=[
-            {
-                'QualificationTypeId': master_qualification_id,
-                'Comparator': 'Exists',
-                'RequiredToPreview': False
-            },
-        ],
-        UniqueRequestToken=videoId,
+        QualificationRequirements=qualification_requirements,
+        UniqueRequestToken=unique_token,
     )
 
     print(response)
