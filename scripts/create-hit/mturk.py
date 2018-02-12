@@ -8,6 +8,24 @@ external_url = 'https://s3.amazonaws.com/amt-motion-relationships/hit.html'
 
 load_dotenv('../../.env', verbose=True)
 
+def get_env_settings(isProduction):
+    if isProduction:
+        return {
+            'endpoint_url': 'https://mturk-requester.us-east-1.amazonaws.com',
+            'qualification_requirements': [
+                {
+                    'QualificationTypeId': '2F1QJWKUDD8XADTFD2Q0G6UTO95ALH',
+                    'Comparator': 'Exists',
+                    'RequiredToPreview': False
+                },
+            ]
+        }
+    else:
+        return {
+            'endpoint_url': 'https://mturk-requester-sandbox.us-east-1.amazonaws.com',
+            'qualification_requirements': []
+        }
+
 def create_client(endpoint_url):
     return boto3.client(
         'mturk',
@@ -17,28 +35,32 @@ def create_client(endpoint_url):
         aws_secret_access_key=os.environ.get('AWS_SECRET_KEY'),
     )
 
-def create_hit(videoId, isProduction):
-    print("Creating HIT for {}".format(videoId))
+def create_hit_type(isProduction):
+    settings = get_env_settings(isProduction)
+    client = create_client(settings['endpoint_url'])
 
-    endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
-    master_qualification_id = '2ARFPLSP75KLA8M8DH1HTEQVJT3SY6'
-    qualification_requirements = []
+    response = client.create_hit_type(
+        AssignmentDurationInSeconds=10800, # 3 hours  
+        AutoApprovalDelayInSeconds=86400, # 24 hours
+        Reward='0.17',
+        Title='Annotate objects in a 5s video',
+        Keywords='annotate, video',
+        Description='Your task is to label the relationships between moving objects in a short 5s video, out of 5 choices.',
+        QualificationRequirements=settings['qualification_requirements']
+    )
+
+    return response['HITTypeId']
+
+def create_hit(videoId, hitTypeId, isProduction=False):
+    print("Creating HIT for {}".format(videoId))
+    settings = get_env_settings(isProduction)    
     # In sandbox mode, allow duplicate HITs
     unique_token = videoId + str(random.randint(0,10000))
 
     if isProduction:
-        endpoint_url = 'https://mturk-requester.us-east-1.amazonaws.com'
-        master_qualification_id = '2F1QJWKUDD8XADTFD2Q0G6UTO95ALH'
-        qualification_requirements = [
-            {
-                'QualificationTypeId': master_qualification_id,
-                'Comparator': 'Exists',
-                'RequiredToPreview': False
-            },
-        ]
         unique_token = videoId
         
-    client = create_client(endpoint_url)
+    client = create_client(settings['endpoint_url'])
 
     external_question = """
     <ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">
@@ -47,18 +69,12 @@ def create_hit(videoId, isProduction):
     </ExternalQuestion>
     """.format(external_url, videoId)
 
-    response = client.create_hit(
+    response = client.create_hit_with_hit_type(
+        HITTypeId=hitTypeId,
         MaxAssignments=3,
-        AutoApprovalDelayInSeconds=86400, # 24 hours
         LifetimeInSeconds=259200, # 3 days
-        AssignmentDurationInSeconds=10800, # 3 hours  
-        Reward='0.17',
-        Title='Annotate objects in a 5s video',
-        Keywords='annotate, video',
-        Description='Your task is to label the relationships between moving objects in a short 5s video, out of 5 choices.',
         Question=external_question,
         RequesterAnnotation="By Galen Han (galen.han.14@ucl.ac.uk) | Video ID: {}".format(videoId),
-        QualificationRequirements=qualification_requirements,
         UniqueRequestToken=unique_token,
     )
 

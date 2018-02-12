@@ -16,5 +16,9 @@ if isProduction:
         print('Aborting')
         exit(-1)
 
+hitTypeId = mturk.create_hit_type(isProduction)
+
+print("Created HIT Type: {}".format(hitTypeId))
+
 for vid in videoIds:
-    mturk.create_hit(vid, isProduction)
+    mturk.create_hit(vid, hitTypeId, isProduction)
