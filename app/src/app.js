@@ -22,6 +22,10 @@ if (youtubeId === null) {
   alert('Video parameter not set');
 }
 
+$('#assignmentId').val(qs('assignmentId'));
+const submitUrl = `${qs('turkSubmitTo')}/mturk/externalSubmit`;
+$('#mturk_form').attr('action', submitUrl);
+
 const videoDir = `videos/${youtubeId}`;
 
 $('#video source').attr('src', `${videoDir}.mp4`);
