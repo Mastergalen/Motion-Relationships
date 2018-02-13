@@ -35,7 +35,7 @@ video.onplay = () => {
 
 function hitTestBBox(stageX, stageY) {
   // Reverse order of BoundingBoxes, to get smallest box first
-  for (const box of _.reverse(BoundingBoxes)) {
+  for (const box of BoundingBoxes.slice().reverse()) {
     if (stageX >= box.x &&
       stageX <= box.x + box.width &&
       stageY >= box.y &&
