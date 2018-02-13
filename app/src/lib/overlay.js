@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import _ from 'lodash';
 import toastr from 'toastr';
 
@@ -55,6 +56,9 @@ stage.on('stagemousedown', (evt) => {
 
   console.log(`Starting ID: ${hitId}`);
   dragSelect.startId = hitId;
+
+  // Set the focus on the player to enable keyboard shortcuts
+  $('.plyr.plyr--video').focus();
 });
 
 stage.on('stagemousemove', (evt) => {

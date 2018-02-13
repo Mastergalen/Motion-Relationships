@@ -31,21 +31,8 @@ const videoDir = `videos/${youtubeId}`;
 
 $('#video source').attr('src', `${videoDir}.mp4`);
 
-const players = plyr.setup();
+plyr.setup();
 global.annotationMap = Map();
-
-document.body.onkeydown = (e) => {
-  if (e.keyCode === 32) {
-    e.preventDefault();
-  }
-};
-
-document.body.onkeyup = (e) => {
-  if (e.keyCode === 32) {
-    players[0].togglePlay();
-    e.preventDefault();
-  }
-};
 
 // TODO Do not enable play button until videoData is loaded
 

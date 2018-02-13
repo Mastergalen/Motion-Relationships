@@ -41,19 +41,29 @@
     <body>
         <div class="container">
             <h1>Motion Relationship Labelling Task</h1>
-            <p>Please annotate the motion relationship between every object, for the entire video</p>
+            <p>Please label the motion relationship between every object which has a <span class="text-danger">red</span> box around it</p>
             <p>You can replay the video as many times as you want.</p>
 
             <h3>Relationship types explained</h3>
             <ul>
-                <li><b>No relationship</b> - the two entities do not affect each other. </li>
+                <li><b>No relationship (default)</b> - the two entities do not affect each other. If you do not label a relationship between two objects, this is the default label that will be assigned.</li>
                 <li><b>Gives way to </b>- Entity A waits and gives way for entity B to pass</li>
                 <li><b>Moves together as a group </b>- Entity A and B move together. E.g. a child following its parents, or a couple walking together.</li>
                 <li><b>Avoids </b>- Entity A diverts its path to avoid colliding with Entity B</li>
                 <li><b>Unsure </b>- If you are unsure what to label the relationship as, please select this option.</li>
             </ul>
 
-            <div class="alert alert-info">Pause the video and hover over the boxes to see the ID of the entity. Drag and drop to select two entities to annotate.</div>
+            <div class="alert alert-info">
+                <h4 class="alert-heading">Annotation Controls</h4>
+                <ul>
+                    <li>
+                            Pause the video at any point and hover over the red boxes to see the ID of the entity. Drag a line between two boxes by holding left-click to annotate the relationship between the two objects.
+                    </li>
+                    <li>You can use the <code>Space</code> key to pause/play the video</li>
+                    <li>Below the video you can delete and edit your annotations</li>
+                    <li>View an <a href="https://s3.amazonaws.com/amt-motion-relationships/tutorial/annotation-tool.mp4" target="_blank">example video <i class="fas fa-video"></i></a> of how to complete the task.</li>
+                </ul>
+            </div>
             <div id="video-container">
                 <canvas id="overlay"></canvas>
                 <video

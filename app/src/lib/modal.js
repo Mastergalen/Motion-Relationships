@@ -64,6 +64,9 @@ function createModal(startId, endId) {
     global.annotationMap = global.annotationMap.set(`${startId}:${endId}`, {
       row: $row,
     });
+
+    // Set the focus on the player to enable keyboard shortcuts
+    $('.plyr.plyr--video').focus();
   });
 }
 
