@@ -49,6 +49,21 @@ def create_hit_type(isProduction):
         QualificationRequirements=settings['qualification_requirements']
     )
 
+     # Set notification settings
+    res = client.update_notification_settings(
+        HITTypeId=response['HITTypeId'],
+        Notification={
+            'Destination': 'arn:aws:sns:us-east-1:506356021079:mturk-motion-relationship-assignment-submitted',
+            'Transport':'SNS',
+            'Version': '2006-05-05',
+            'EventTypes': [
+                'AssignmentSubmitted',
+            ]
+        },
+        Active=True
+    )
+    print(res)
+
     return response['HITTypeId']
 
 def create_hit(videoId, hitTypeId, isProduction=False):
@@ -78,4 +93,5 @@ def create_hit(videoId, hitTypeId, isProduction=False):
         UniqueRequestToken=unique_token,
     )
 
-    print(response)
+    if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+        raise Exception(response)
