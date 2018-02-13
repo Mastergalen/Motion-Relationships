@@ -14,12 +14,6 @@ let BoundingBoxes = [];
 const stage = new createjs.Stage('overlay');
 stage.enableMouseOver();
 
-/* FIXME
-canvas.onclick = function(e) {
-    players[0].togglePlay();
-};
-*/
-
 video.onplay = () => {
   const w = video.offsetWidth;
   const h = video.offsetHeight;
@@ -109,7 +103,11 @@ function drawFrame(frameNumber) {
   stage.removeAllChildren();
 
   if (bboxes === undefined) {
-    console.warn('Bboxes undefined frame number', frameNumber);
+    if (frameNumber > 0) {
+      drawFrame(frameNumber - 1);
+    } else {
+      console.warn('Bboxes undefined frame number', frameNumber);
+    }
     return;
   }
 
