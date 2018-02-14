@@ -19,8 +19,6 @@ video.onplay = () => {
   const w = video.offsetWidth;
   const h = video.offsetHeight;
 
-  // TODO On resize, the scale factor will probably break
-
   scaleFactor = w / videoData.width;
 
   canvas.width = w;

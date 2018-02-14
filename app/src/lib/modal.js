@@ -36,7 +36,6 @@ function createModal(startId, endId) {
   });
 
   submitButton.click(function () {
-    // TODO Write hidden inputs too
     const relationship = modal.find('.card.selected').data('value');
 
     modal.modal('hide');

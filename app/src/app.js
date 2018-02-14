@@ -34,10 +34,10 @@ $('#video source').attr('src', `${videoDir}.mp4`);
 plyr.setup();
 global.annotationMap = Map();
 
-// TODO Do not enable play button until videoData is loaded
-
 fetch(`${videoDir}.json`).then(res => res.json()).then((json) => {
   const videoData = json;
   startDrawingOverlay(videoData);
+
+  $('#video-container').removeClass('loading');
 });
 

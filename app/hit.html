@@ -17,26 +17,6 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/EaselJS/1.0.2/easeljs.min.js" integrity="sha256-m4ldXda61DCZVuvCEAAZeHlAsDkeMEMtrH68df1sxME=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/plyr/2.0.18/plyr.js" integrity="sha256-d3zbxocNfS7I0jy36Z8prRbhIPcXZabOIJFDpnO2RNs=" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/plyr/2.0.18/plyr.css" integrity="sha256-fZCJMY30eNC8ftYfOWmEXhSd41kVy5RDrZOK9dlQnqg=" crossorigin="anonymous" />
-        <style>
-            #video-container {
-                position:relative;
-            }
-            #overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                z-index: 10;
-                /* background-color:rgba(255,0,0,0.5); */
-            }
-
-            .plyr {
-                margin-bottom: 55px;
-            }
-
-            .plyr__controls {
-                bottom: -55px !important;
-            }
-        </style>
     </head>
     <body>
         <div class="container">
@@ -64,7 +44,12 @@
                     <li>View an <a href="https://s3.amazonaws.com/amt-motion-relationships/tutorial/annotation-tool.mp4" target="_blank">example video <i class="fas fa-video"></i></a> of how to complete the task.</li>
                 </ul>
             </div>
-            <div id="video-container">
+            <div id="video-container" class="loading">
+                <div class="load-overlay">                    
+                    <div style="height: 100%" class="row justify-content-center align-items-center">
+                        <i class="fas fa-spinner fa-pulse"></i>
+                    </div>
+                </div>
                 <canvas id="overlay"></canvas>
                 <video
                         id="video"
@@ -99,7 +84,6 @@
                 </div>
                 
                 <div class="form-group">
-                    <!-- TODO Do not allow zero annotations -->
                     <button class="btn btn-primary" type="submit">Submit</button>
                 </div>
             </form>
