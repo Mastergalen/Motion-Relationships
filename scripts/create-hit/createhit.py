@@ -6,12 +6,14 @@ from utils.prompt import query_yes_no
 
 isProduction = False
 videoIds = [
-    '-3K26M-m_00'
+    '32CH8Op4VJw-419',
+    'NuOiKCBO1hU-422',
+    'Xbw_9hrp2KY-420'
 ]
 
 if isProduction:
     res = query_yes_no("In PRODUCTION, proceed?", default="no")
-    
+
     if not res:
         print('Aborting')
         exit(-1)

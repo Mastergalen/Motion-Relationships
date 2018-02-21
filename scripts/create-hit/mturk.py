@@ -18,12 +18,16 @@ def get_env_settings(isProduction):
                     'Comparator': 'Exists',
                     'RequiredToPreview': False
                 },
-            ]
+            ],
+            'lifetime': 259200, # 3 days,
+            'max_assignments': 3
         }
     else:
         return {
             'endpoint_url': 'https://mturk-requester-sandbox.us-east-1.amazonaws.com',
-            'qualification_requirements': []
+            'qualification_requirements': [],
+            'lifetime': 2629743, # 1 month
+            'max_assignments': 50
         }
 
 def create_client(endpoint_url):
@@ -42,7 +46,7 @@ def create_hit_type(isProduction):
     response = client.create_hit_type(
         AssignmentDurationInSeconds=10800, # 3 hours  
         AutoApprovalDelayInSeconds=86400, # 24 hours
-        Reward='0.17',
+        Reward='0.20',
         Title='Annotate objects in a 5s video',
         Keywords='annotate, video',
         Description='Your task is to label the relationships between moving objects in a short 5s video, out of 5 choices.',
@@ -86,8 +90,8 @@ def create_hit(videoId, hitTypeId, isProduction=False):
 
     response = client.create_hit_with_hit_type(
         HITTypeId=hitTypeId,
-        MaxAssignments=3,
-        LifetimeInSeconds=259200, # 3 days
+        MaxAssignments=settings['max_assignments'],
+        LifetimeInSeconds=settings['lifetime'],
         Question=external_question,
         RequesterAnnotation="By Galen Han (galen.han.14@ucl.ac.uk) | Video ID: {}".format(videoId),
         UniqueRequestToken=unique_token,

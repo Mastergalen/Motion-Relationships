@@ -33,3 +33,12 @@ python2 tools/infer_simple.py \
     --wts https://s3-us-west-2.amazonaws.com/detectron/36761843/12_2017_baselines/e2e_mask_rcnn_X-101-32x8d-FPN_1x.yaml.06_35_59.RZotkLKI/output/train/coco_2014_train%3Acoco_2014_valminusminival/generalized_rcnn/model_final.pkl \
     videoframes
 ```
+
+## Correcting ID mismatches
+
+Open the JSON file
+
+```
+\[[\s\S\r]                {ID-TO-REPLACE},
+[ {NEWID},
+```

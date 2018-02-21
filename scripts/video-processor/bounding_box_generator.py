@@ -1,17 +1,15 @@
 """
 Generate bounding boxes using Detectron
 """
-import cv2
 import glob
 import json
-import logging
 import os
 import shutil
 import subprocess
 import time
 from pathlib import Path
+import cv2
 from lib.tracker import apply_tracker
-from pdb import set_trace
 
 directory = 'downloads'
 tmpDirectory = 'tmp'
@@ -58,10 +56,10 @@ total_videos = len(vid_list)
 for i, file_path in enumerate(vid_list):
     start = time.time()
     file_name = os.path.basename(file_path)
-    youtube_id = file_name.split('.')[0]
-    annotation_path = os.path.join(directory, "{}.json".format(youtube_id))
+    video_id = file_name.split('.')[0]
+    annotation_path = os.path.join(directory, "{}.json".format(video_id))
     if os.path.isfile(annotation_path):
-        print('Already processed {}, skipping'.format(youtube_id))
+        print('Already processed {}, skipping'.format(video_id))
         continue
     else:
         print("Processing {} | {}/{}".format(file_name, i, total_videos))
@@ -93,4 +91,4 @@ for i, file_path in enumerate(vid_list):
 
     total = time.time() - start
 
-    print('Finished processing {}. Time: {}'.format(youtube_id, total))
+    print('Finished processing {}. Time: {}'.format(video_id, total))
