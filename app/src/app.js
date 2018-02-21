@@ -28,10 +28,15 @@ const submitUrl = `${qs('turkSubmitTo')}/mturk/externalSubmit`;
 $('#mturk_form').attr('action', submitUrl);
 
 const videoDir = `videos/${youtubeId}`;
+const videoPath = `${videoDir}.mp4`;
 
-$('#video source').attr('src', `${videoDir}.mp4`);
-
-plyr.setup();
+[global.player] = plyr.setup();
+global.player.source({
+  sources: [{
+    src: videoPath,
+    type: 'video/mp4',
+  }],
+});
 global.annotationMap = Map();
 
 fetch(`${videoDir}.json`).then(res => res.json()).then((json) => {

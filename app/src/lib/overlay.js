@@ -4,27 +4,16 @@ import toastr from 'toastr';
 
 import createModal from './modal';
 
-const video = document.getElementById('video');
 const canvas = document.getElementById('overlay');
 let lastTime = -1;
 let videoData;
+let video;
 let scaleFactor;
 let BoundingBoxes = [];
 
 // Create a stage by getting a reference to the canvas
 const stage = new createjs.Stage('overlay');
 stage.enableMouseOver();
-
-video.onplay = () => {
-  const w = video.offsetWidth;
-  const h = video.offsetHeight;
-
-  scaleFactor = w / videoData.width;
-
-  canvas.width = w;
-  canvas.height = h;
-};
-
 
 function hitTestBBox(stageX, stageY) {
   // Reverse order of BoundingBoxes, to get smallest box first
@@ -189,6 +178,18 @@ function draw() {
 }
 
 function startDrawingOverlay(data) {
+  video = global.player.getMedia();
+
+  global.player.on('play', function () {
+    const w = video.offsetWidth;
+    const h = video.offsetHeight;
+  
+    scaleFactor = w / videoData.width;
+  
+    canvas.width = w;
+    canvas.height = h;
+  });
+
   videoData = data;
   draw();
 }
