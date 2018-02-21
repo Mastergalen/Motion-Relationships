@@ -69,6 +69,10 @@ stage.on('stagemouseup', (evt) => {
   const dragDistance = Math.sqrt(((dragSelect.startPoint.stageX - evt.stageX) ** 2) +
   ((dragSelect.startPoint.stageY - evt.stageY) ** 2));
 
+  // Remove line
+  dragSelect.line.graphics.clear();
+  stage.update();
+
   // Ignore accidental clicks
   if (dragDistance < 1.0) return;
 
@@ -114,7 +118,9 @@ function drawFrame(frameNumber) {
     const y = box[2] * scaleFactor;
     const width = box[3] * scaleFactor;
     const height = box[4] * scaleFactor;
-    rect.graphics.beginStroke('red').drawRect(
+    const strokeCmd = rect.graphics.setStrokeStyle(1).command;
+    const colourCmd = rect.graphics.beginStroke('red').command;
+    rect.graphics.drawRect(
       x,
       y,
       width,
@@ -130,14 +136,16 @@ function drawFrame(frameNumber) {
     rect.hitArea = hit;
     stage.addChild(rect);
 
-    const label = new createjs.Text(`ID: ${entityId}`, '48px Arial', '#42f442');
+    const label = new createjs.Text(`ID: ${entityId}`, '40px Arial', '#42f442');
     label.x = x;
     label.y = y - 10;
     label.visible = false;
     stage.addChild(label);
 
-    rect.on('mouseover', () => {
+    rect.on('mouseover', function () {
       label.visible = true;
+      strokeCmd.width = 3;
+      colourCmd.style = 'blue';
       stage.update();
 
       setTimeout(() => {
@@ -148,6 +156,8 @@ function drawFrame(frameNumber) {
 
     rect.on('mouseout', () => {
       label.visible = false;
+      strokeCmd.width = 1;
+      colourCmd.style = 'red';
       stage.update();
     });
 
