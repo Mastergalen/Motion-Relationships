@@ -11,8 +11,10 @@ args = parser.parse_args()
 
 videoIds = [
     '32CH8Op4VJw-419',
-    # 'NuOiKCBO1hU-422',
-    # 'Xbw_9hrp2KY-420'
+    'NuOiKCBO1hU-422',
+    'Xbw_9hrp2KY-420',
+    '05v8MA6SZ54-129',
+    'G-ie5hQbG2s-412'
 ]
 
 if args.production:

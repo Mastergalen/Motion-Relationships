@@ -1,26 +1,24 @@
-import boto3
-import os
 import random
-from dotenv import load_dotenv
+from lib import apiclient
 
-region_name = 'us-east-1'
 external_url = 'https://s3.amazonaws.com/amt-motion-relationships/hit.html'
 
-load_dotenv('../../.env', verbose=True)
 
 def get_env_settings(isProduction):
     if isProduction:
         return {
             'endpoint_url': 'https://mturk-requester.us-east-1.amazonaws.com',
-            'qualification_requirements': [
-                {
-                    'QualificationTypeId': '2F1QJWKUDD8XADTFD2Q0G6UTO95ALH',
-                    'Comparator': 'Exists',
-                    'RequiredToPreview': False
-                },
-            ],
+            # TODO: Temporarily disable master's requirement
+            # 'qualification_requirements': [
+            #     {
+            #         'QualificationTypeId': '2F1QJWKUDD8XADTFD2Q0G6UTO95ALH',
+            #         'Comparator': 'Exists',
+            #         'RequiredToPreview': False
+            #     },
+            # ],
+            'qualification_requirements': [ ],
             'lifetime': 259200, # 3 days,
-            'max_assignments': 3
+            'max_assignments': 1
         }
     else:
         return {
@@ -30,18 +28,11 @@ def get_env_settings(isProduction):
             'max_assignments': 50
         }
 
-def create_client(endpoint_url):
-    return boto3.client(
-        'mturk',
-        endpoint_url=endpoint_url,
-        region_name=region_name,
-        aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
-        aws_secret_access_key=os.environ.get('AWS_SECRET_KEY'),
-    )
+
 
 def create_hit_type(isProduction):
     settings = get_env_settings(isProduction)
-    client = create_client(settings['endpoint_url'])
+    client = apiclient.create(settings['endpoint_url'])
 
     response = client.create_hit_type(
         AssignmentDurationInSeconds=10800, # 3 hours  
@@ -72,14 +63,14 @@ def create_hit_type(isProduction):
 
 def create_hit(videoId, hitTypeId, isProduction=False):
     print("Creating HIT for {}".format(videoId))
-    settings = get_env_settings(isProduction)    
+    settings = get_env_settings(isProduction)
     # In sandbox mode, allow duplicate HITs
-    unique_token = videoId + str(random.randint(0,10000))
+    unique_token = videoId + str(random.randint(0, 10000))
 
     if isProduction:
         unique_token = videoId
-        
-    client = create_client(settings['endpoint_url'])
+
+    client = apiclient.create(settings['endpoint_url'])
 
     external_question = """
     <ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd">
