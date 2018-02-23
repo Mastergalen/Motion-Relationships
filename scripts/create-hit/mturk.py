@@ -35,7 +35,7 @@ def create_hit_type(isProduction):
     client = apiclient.create(settings['endpoint_url'])
 
     response = client.create_hit_type(
-        AssignmentDurationInSeconds=10800, # 3 hours  
+        AssignmentDurationInSeconds=1800, # 30 minutes
         AutoApprovalDelayInSeconds=86400, # 24 hours
         Reward='0.20',
         Title='Annotate objects in a 5s video',
