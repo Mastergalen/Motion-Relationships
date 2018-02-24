@@ -3,8 +3,11 @@ from dotenv import load_dotenv
 from peewee import *
 from pdb import set_trace
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '../../.env')
+dotenv_path = os.path.join(os.path.dirname(__file__), '../../../.env')
 load_dotenv(dotenv_path)
+
+if os.environ.get('POSTGRES_DB_NAME') is None:
+    raise ValueError('Env not set')
 
 db = PostgresqlDatabase(
     os.environ.get('POSTGRES_DB_NAME'),
