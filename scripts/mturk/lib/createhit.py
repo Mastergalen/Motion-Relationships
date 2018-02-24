@@ -7,7 +7,6 @@ external_url = 'https://s3.amazonaws.com/amt-motion-relationships/hit.html'
 def get_env_settings(isProduction):
     if isProduction:
         return {
-            'endpoint_url': 'https://mturk-requester.us-east-1.amazonaws.com',
             # TODO: Temporarily disable master's requirement
             # 'qualification_requirements': [
             #     {
@@ -22,7 +21,6 @@ def get_env_settings(isProduction):
         }
     else:
         return {
-            'endpoint_url': 'https://mturk-requester-sandbox.us-east-1.amazonaws.com',
             'qualification_requirements': [],
             'lifetime': 2629743, # 1 month
             'max_assignments': 50
@@ -32,7 +30,7 @@ def get_env_settings(isProduction):
 
 def create_hit_type(isProduction):
     settings = get_env_settings(isProduction)
-    client = apiclient.create(settings['endpoint_url'])
+    client = apiclient.create(isProduction)
 
     response = client.create_hit_type(
         AssignmentDurationInSeconds=1800, # 30 minutes
