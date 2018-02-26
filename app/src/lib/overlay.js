@@ -51,12 +51,30 @@ stage.on('stagemousedown', (evt) => {
 stage.on('stagemousemove', (evt) => {
   if (!dragSelect.dragging) return;
 
+  const arrowLength = 10;
+  const arrowAngle = Math.PI / 6;
+
+  const direction = Math.atan2(
+    evt.stageY - dragSelect.startPoint.stageY,
+    evt.stageX - dragSelect.startPoint.stageX,
+  );
+
   dragSelect.line.graphics.clear();
   dragSelect.line.graphics
     .setStrokeStyle(3)
     .beginStroke('#0000FF')
     .moveTo(dragSelect.startPoint.stageX, dragSelect.startPoint.stageY)
     .lineTo(evt.stageX, evt.stageY)
+    // Draw arrow head
+    .lineTo(
+      evt.stageX - (arrowLength * Math.cos(direction - arrowAngle)),
+      evt.stageY - (arrowLength * Math.sin(direction - arrowAngle)),
+    )
+    .moveTo(evt.stageX, evt.stageY)
+    .lineTo(
+      evt.stageX - (arrowLength * Math.cos(direction + arrowAngle)),
+      evt.stageY - (arrowLength * Math.sin(direction + arrowAngle)),
+    )
     .endStroke();
 
   stage.update();
