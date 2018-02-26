@@ -1,3 +1,4 @@
+import datetime
 from peewee import *
 from database.db import database
 
@@ -9,6 +10,10 @@ class VideoClip(BaseModel):
     id = CharField(primary_key=True)
     notes = CharField(null=True)
     is_static_camera = BooleanField(default=False)
+    is_ready_to_annotate = BooleanField(default=False)
+    cleanup = CharField(null=True)
+    has_interactions = BooleanField(default=False)
+    created_at = DateTimeField(default=datetime.datetime.now)
 
 class Worker(BaseModel):
     id = CharField(primary_key=True)
