@@ -6,27 +6,30 @@ import lib.createhit as createhit
 from lib.utils.prompt import query_yes_no
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--production', type=bool, help='Launch in production mode', default=False)
+parser.add_argument('--production', action='store_true', help='Launch in production mode')
 args = parser.parse_args()
 
-videoIds = [
-    '32CH8Op4VJw-419',
-    'NuOiKCBO1hU-422',
-    'Xbw_9hrp2KY-420',
-    '05v8MA6SZ54-129',
-    'G-ie5hQbG2s-412'
+VIDEO_IDS = [
+    'Xbw_9hrp2KY-420'
 ]
 
 if args.production:
+    SETTINGS = createhit.get_env_settings(args.production)
+    TOTAL_ASSIGNMENTS = SETTINGS['max_assignments'] * len(VIDEO_IDS)
+    print("About to launch {} videos".format(len(VIDEO_IDS)))
+    print("{} assignments per video".format(SETTINGS['max_assignments']))
+    print("{} Total assigmnents".format(TOTAL_ASSIGNMENTS))
+    TOTAL_COST = float(SETTINGS['reward']) * TOTAL_ASSIGNMENTS
+    print("Total cost: {0:.2f}".format(TOTAL_COST))
     res = query_yes_no("In PRODUCTION, proceed?", default="no")
 
     if not res:
         print('Aborting')
         exit(-1)
 
-hitTypeId = createhit.create_hit_type(args.production)
+hit_type_id = createhit.create_hit_type(args.production)
 
-print("Created HIT Type: {}".format(hitTypeId))
+print("Created HIT Type: {}".format(hit_type_id))
 
-for vid in videoIds:
-    createhit.create_hit(vid, hitTypeId, args.production)
+for vid in VIDEO_IDS:
+    createhit.create_hit(vid, hit_type_id, args.production)
