@@ -3,6 +3,23 @@ import $ from 'jquery';
 const modalTemplate = require('../templates/annotation-popup.handlebars');
 const rowTemplate = require('../templates/annotation-row.handlebars');
 
+function appendRow(startId, endId, relationship) {
+  const $row = $(rowTemplate({
+    startId,
+    endId,
+    relationship,
+  }));
+
+  // Set the selected option as active
+  $row.find('select').val(relationship);
+
+  $row.prependTo('#annotations-container tbody');
+
+  global.annotationMap = global.annotationMap.set(`${startId}:${endId}`, {
+    row: $row,
+  });
+}
+
 function createModal(startId, endId) {
   const html = modalTemplate({
     startId,
@@ -49,20 +66,12 @@ function createModal(startId, endId) {
       return;
     }
 
-    const $row = $(rowTemplate({
-      startId,
-      endId,
-      relationship,
-    }));
+    appendRow(startId, endId, relationship);
 
-    // Set the selected option as active
-    $row.find('select').val(relationship);
-
-    $row.prependTo('#annotations-container tbody');
-
-    global.annotationMap = global.annotationMap.set(`${startId}:${endId}`, {
-      row: $row,
-    });
+    // Add undirected relationship
+    if (relationship === 'group') {
+      appendRow(endId, startId, relationship);
+    }
 
     // Set the focus on the player to enable keyboard shortcuts
     $('.plyr.plyr--video').focus();
