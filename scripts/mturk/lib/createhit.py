@@ -40,7 +40,7 @@ def create_hit_type(isProduction):
         Reward=settings['reward'],
         Title='Annotate objects in a 5s video',
         Keywords='annotate, video',
-        Description='Your task is to label the relationships between moving objects in a short 5s video, out of 4 choices. An experienced annotator can complete this in around 1 minute.',
+        Description='Your task is to label the relationships between moving objects in a short 5s video, out of 4 choices. After understanding the task, each video should normally take around 1 minute to annotate',
         QualificationRequirements=settings['qualification_requirements']
     )
 

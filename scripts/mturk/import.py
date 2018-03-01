@@ -60,6 +60,7 @@ def import_mturk():
                     'feedback': data['feedback'],
                     'video_clip_id': clip.id,
                     'worker_id': worker.id,
+                    'assignment_status': assignment['AssignmentStatus'],
                     'accepted_at': assignment['AcceptTime'],
                     'submitted_at': assignment['SubmitTime'],
                     'reward': hit['Reward']

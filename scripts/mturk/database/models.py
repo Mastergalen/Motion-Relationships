@@ -24,6 +24,7 @@ class Assignment(BaseModel):
     feedback = CharField(null=True)
     video_clip_id = ForeignKeyField(VideoClip)
     worker_id = ForeignKeyField(Worker)
+    assignment_status = CharField()
     accepted_at = DateTimeField()
     submitted_at = DateTimeField()
     reward = DecimalField(decimal_places=2)
