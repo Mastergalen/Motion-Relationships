@@ -3,9 +3,10 @@ Imports assignments completed on Amazon Mechnical Turk to database
 """
 import re
 import xml.etree.ElementTree as ET
-from database.models import *
-from lib import apiclient
-from pdb import set_trace
+
+from lib.database.models import *
+from lib.mturk import apiclient
+
 
 def import_mturk():
     print('Importing MTurk data')
@@ -45,8 +46,8 @@ def import_mturk():
                     end = matches.group(2)
                     data['annotations'].append({
                         'assignment_id': assignment['AssignmentId'],
-                        'start': start, 
-                        'end': end, 
+                        'start': start,
+                        'end': end,
                         'relationship': value
                     })
                 else:
@@ -72,7 +73,6 @@ def import_mturk():
                 Annotation.insert_many(data['annotations']).execute()
             else:
                 print("Already imported {}".format(assignment['AssignmentId']))
-
 
     print('All done')
 

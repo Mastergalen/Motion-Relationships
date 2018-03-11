@@ -2,7 +2,8 @@
 Submits the HIT as an External Question
 """
 import argparse
-import lib.createhit as createhit
+
+import lib.mturk.createhit as create_hit
 from lib.utils.prompt import query_yes_no
 
 parser = argparse.ArgumentParser()
@@ -14,7 +15,7 @@ VIDEO_IDS = [
 ]
 
 if args.production:
-    SETTINGS = createhit.get_env_settings(args.production)
+    SETTINGS = create_hit.get_env_settings(args.production)
     TOTAL_ASSIGNMENTS = SETTINGS['max_assignments'] * len(VIDEO_IDS)
     print("About to launch {} videos".format(len(VIDEO_IDS)))
     print("{} assignments per video".format(SETTINGS['max_assignments']))

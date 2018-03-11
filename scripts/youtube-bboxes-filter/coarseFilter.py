@@ -1,10 +1,11 @@
 """
 Filter the original YouTube BB dataset
 """
-from pandas import DataFrame, read_csv
-import pandas as pd
-import numpy as np
 from pdb import set_trace
+
+import numpy as np
+import pandas as pd
+
 # pd.options.display. = '{:.2f}'.format
 
 df = pd.read_csv('youtube_boundingboxes_detection_train.csv',
@@ -19,7 +20,7 @@ df = pd.read_csv('youtube_boundingboxes_detection_train.csv',
                         'xmax',
                         'ymin',
                         'ymax'
-                       ],
+                        ],
                  dtype={
                      'youtube_id': str,
                      'timestamp_ms': np.uint32,
@@ -41,19 +42,23 @@ g = df.groupby(['youtube_id'])
 
 print("Total videos to process: {}".format(len(g)))
 
+
 # Needs to have more than 1 type of class in the video
 def filter_diversity(x):
     return len(x.groupby('class_name')) > 1
 
+
 # Video contains car
 def filter_contains_cars(x):
     return 23 in x['class_id'].unique()
+
 
 def filter_undesired(x):
     undesired_class_ids = [6, 10, 11, 12, 14, 18, 20]
     intersection = len(np.intersect1d(x['class_id'].unique(), undesired_class_ids))
 
     return intersection == 0
+
 
 print("Filter cars")
 filtered = g.filter(filter_contains_cars).groupby('youtube_id')

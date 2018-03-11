@@ -1,4 +1,5 @@
 import random
+
 from lib import apiclient
 
 external_url = 'https://s3.amazonaws.com/amt-motion-relationships/hit.html'
@@ -15,19 +16,18 @@ def get_env_settings(is_production=False):
             #         'RequiredToPreview': False
             #     },
             # ],
-            'qualification_requirements': [ ],
-            'lifetime': 259200, # 3 days,
+            'qualification_requirements': [],
+            'lifetime': 259200,  # 3 days,
             'max_assignments': 3,
             'reward': '0.20'
         }
     else:
         return {
             'qualification_requirements': [],
-            'lifetime': 2629743, # 1 month
+            'lifetime': 2629743,  # 1 month
             'max_assignments': 50,
             'reward': '0.20'
         }
-
 
 
 def create_hit_type(isProduction):
@@ -35,8 +35,8 @@ def create_hit_type(isProduction):
     client = apiclient.create(isProduction)
 
     response = client.create_hit_type(
-        AssignmentDurationInSeconds=1800, # 30 minutes
-        AutoApprovalDelayInSeconds=86400, # 24 hours
+        AssignmentDurationInSeconds=1800,  # 30 minutes
+        AutoApprovalDelayInSeconds=86400,  # 24 hours
         Reward=settings['reward'],
         Title='Annotate objects in a 5s video',
         Keywords='annotate, video',
@@ -44,12 +44,12 @@ def create_hit_type(isProduction):
         QualificationRequirements=settings['qualification_requirements']
     )
 
-     # Set notification settings
+    # Set notification settings
     res = client.update_notification_settings(
         HITTypeId=response['HITTypeId'],
         Notification={
             'Destination': 'arn:aws:sns:us-east-1:506356021079:mturk-motion-relationship-assignment-submitted',
-            'Transport':'SNS',
+            'Transport': 'SNS',
             'Version': '2006-05-05',
             'EventTypes': [
                 'AssignmentSubmitted',
@@ -60,6 +60,7 @@ def create_hit_type(isProduction):
     print(res)
 
     return response['HITTypeId']
+
 
 def create_hit(video_id, hit_type_id, is_production=False):
     print("Creating HIT for {}".format(video_id))

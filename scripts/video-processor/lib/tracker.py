@@ -1,11 +1,11 @@
-import numpy as np
 import json
 import time
+
+import numpy as np
 from lib.sort import Sort
 
-from pdb import set_trace
-
 THRESHOLD = 0.9
+
 
 def load_bboxes(bboxes_file):
     """
@@ -16,6 +16,7 @@ def load_bboxes(bboxes_file):
     with open(bboxes_file) as f:
         d = json.load(f)
         return d
+
 
 def apply_tracker(bboxes_file):
     print('Running tracker')
@@ -37,7 +38,7 @@ def apply_tracker(bboxes_file):
         trackers[:, 2:4] = trackers[:, 2:4] - trackers[:, 0:2]
 
         # Move Tracker ID to 1st column    
-        trackers = trackers[:,[4,0,1,2,3]]
+        trackers = trackers[:, [4, 0, 1, 2, 3]]
 
         trackers = trackers.tolist()
 

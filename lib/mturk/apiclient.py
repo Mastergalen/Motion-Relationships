@@ -2,16 +2,16 @@
 MTurk client
 """
 import os
+
 import boto3
-import pdb
 from dotenv import load_dotenv
 
 REGION = 'us-east-1'
 
 load_dotenv('../../.env', verbose=True)
 
-def create(is_production):
 
+def create(is_production):
     endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
 
     if is_production:

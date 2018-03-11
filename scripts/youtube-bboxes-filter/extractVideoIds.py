@@ -1,9 +1,9 @@
 """
 Extracts only the video IDs
 """
-import pandas as pd
 import numpy as np
-from pdb import set_trace
+import pandas as pd
+
 # pd.options.display. = '{:.2f}'.format
 
 df = pd.read_csv('videos_with_cars.csv',
@@ -19,7 +19,7 @@ df = pd.read_csv('videos_with_cars.csv',
                         'xmax',
                         'ymin',
                         'ymax'
-                       ],
+                        ],
                  dtype={
                      'row_id': np.uint32,
                      'youtube_id': str,

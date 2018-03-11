@@ -1,10 +1,14 @@
 import datetime
+
 from peewee import *
-from database.db import database
+
+from lib.database.db import database
+
 
 class BaseModel(Model):
     class Meta:
         database = database()
+
 
 class VideoClip(BaseModel):
     id = CharField(primary_key=True)
@@ -15,9 +19,11 @@ class VideoClip(BaseModel):
     has_interactions = BooleanField(default=False)
     created_at = DateTimeField(default=datetime.datetime.now)
 
+
 class Worker(BaseModel):
     id = CharField(primary_key=True)
     notes = CharField(null=True)
+
 
 class Assignment(BaseModel):
     id = CharField(primary_key=True)
@@ -28,6 +34,7 @@ class Assignment(BaseModel):
     accepted_at = DateTimeField()
     submitted_at = DateTimeField()
     reward = DecimalField(decimal_places=2)
+
 
 class Annotation(BaseModel):
     assignment_id = ForeignKeyField(Assignment)

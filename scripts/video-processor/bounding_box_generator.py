@@ -8,17 +8,19 @@ import shutil
 import subprocess
 import time
 from pathlib import Path
+
 import cv2
 from lib.tracker import apply_tracker
 
 directory = 'downloads'
 tmpDirectory = 'tmp'
 
+
 def generate_images(vidcap):
     length = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
     digits = len(str(length))
 
-    success,image = vidcap.read()
+    success, image = vidcap.read()
 
     count = 0
     while success:
@@ -27,7 +29,8 @@ def generate_images(vidcap):
             image
         )
         count += 1
-        success,image = vidcap.read()
+        success, image = vidcap.read()
+
 
 def generate_bounding_boxes():
     """
@@ -50,6 +53,7 @@ def generate_bounding_boxes():
         "tmp"
     ], check=True, stdout=subprocess.DEVNULL)
 
+
 vid_list = glob.glob("{}/*.mp4".format(directory))
 total_videos = len(vid_list)
 
@@ -63,7 +67,7 @@ for i, file_path in enumerate(vid_list):
         continue
     else:
         print("Processing {} | {}/{}".format(file_name, i, total_videos))
-    
+
     if not os.path.exists(tmpDirectory):
         os.makedirs(tmpDirectory)
 
