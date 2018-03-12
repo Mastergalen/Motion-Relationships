@@ -11,7 +11,16 @@ parser.add_argument('--production', action='store_true', help='Launch in product
 args = parser.parse_args()
 
 VIDEO_IDS = [
-    'Xbw_9hrp2KY-420'
+    '4WZImk31njQ-196',
+    'nt3D26lrkho-413',
+    'HIuqmNiKJx4-412',
+    'NuOiKCBO1hU-423',
+    'NuOiKCBO1hU-424',
+    'Q-utfnQmJMc-201',
+    'Y6Asp_FtgRA-424',
+    '_x8FdEXh_Tg-426',
+    'Aqko6DwEqq4-352',
+    '5thMEw1tRC0-239',
 ]
 
 if args.production:
@@ -28,9 +37,9 @@ if args.production:
         print('Aborting')
         exit(-1)
 
-hit_type_id = createhit.create_hit_type(args.production)
+hit_type_id = create_hit.create_hit_type(args.production)
 
 print("Created HIT Type: {}".format(hit_type_id))
 
 for vid in VIDEO_IDS:
-    createhit.create_hit(vid, hit_type_id, args.production)
+    create_hit.create_hit(vid, hit_type_id, args.production)

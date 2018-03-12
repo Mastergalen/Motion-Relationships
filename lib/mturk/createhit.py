@@ -1,6 +1,6 @@
 import random
 
-from lib import apiclient
+from lib.mturk import apiclient
 
 external_url = 'https://s3.amazonaws.com/amt-motion-relationships/hit.html'
 
@@ -18,7 +18,7 @@ def get_env_settings(is_production=False):
             # ],
             'qualification_requirements': [],
             'lifetime': 259200,  # 3 days,
-            'max_assignments': 3,
+            'max_assignments': 2,
             'reward': '0.20'
         }
     else:

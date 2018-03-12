@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 REGION = 'us-east-1'
 
-load_dotenv('../../.env', verbose=True)
+load_dotenv('.env', verbose=True)
 
 
 def create(is_production):
