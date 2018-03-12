@@ -34,6 +34,17 @@ def delete(annotations, delete_ids):
         frame[:] = [x for x in frame if x[0] not in delete_ids]
 
 
+def count_unique(annotations):
+    ids = set()
+
+    for frame in annotations:
+        for annotation in frame:
+            ids.add(annotation[0])
+
+    print("{} unique IDs remaining".format(len(ids)))
+    print(ids)
+
+
 print("Editing {}".format(args.clip_id))
 
 path = os.path.join('test-videos', '{}.json'.format(args.clip_id))
@@ -44,6 +55,8 @@ if args.delete is not None:
     delete(data['annotations'], args.delete)
 
 correct(data['annotations'], args.source_ids, args.target)
+
+count_unique(data['annotations'])
 
 with open(path, 'w') as f:
     json.dump(data, f, indent=4)
