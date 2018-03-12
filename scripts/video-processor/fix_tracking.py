@@ -10,6 +10,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('clip_id', type=str, help='Clip ID')
 parser.add_argument('target', type=int, help='Target ID')
 parser.add_argument('source_ids', type=int, help='Source IDs', nargs='+')
+parser.add_argument('--delete', type=int, help='IDs to delete', nargs='+')
 args = parser.parse_args()
 
 
@@ -26,11 +27,21 @@ def correct(annotations, replace_ids, target_id):
     return annotations
 
 
+def delete(annotations, delete_ids):
+    print("Deleting {}".format(delete_ids))
+
+    for frame in annotations:
+        frame[:] = [x for x in frame if x[0] not in delete_ids]
+
+
 print("Editing {}".format(args.clip_id))
 
 path = os.path.join('test-videos', '{}.json'.format(args.clip_id))
 with open(path) as f:
     data = json.load(f)
+
+if args.delete is not None:
+    delete(data['annotations'], args.delete)
 
 correct(data['annotations'], args.source_ids, args.target)
 
