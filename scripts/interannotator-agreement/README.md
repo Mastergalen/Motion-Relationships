@@ -1,1 +1,1 @@
-Python script for calculating interannotator agreement.
+Python script for calculating inter-annotator agreement with Fleiss' Kappa.

@@ -36,9 +36,6 @@ python2 tools/infer_simple.py \
 
 ## Correcting ID mismatches
 
-Open the JSON file
-
 ```
-\[[\s\S\r]                {ID-TO-REPLACE},
-[ {NEWID},
+python fix_tracking.py 
 ```
