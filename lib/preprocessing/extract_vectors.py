@@ -2,17 +2,16 @@ import numpy as np
 import lib.utils.loader as loader
 
 
-def in_clip(clip_id, max_frames=150):
+def in_clip(bboxes, max_frames=150):
     """
     Calculate all flow vectors for each entity in clip
-    :param clip_id:
+    :param bboxes: Bounding Boxes
     :param max_frames:
     :return: flow sequence for entity
         Shape: [entity_idx, frame_idx, flow_vector]
         flow_vector: [x, y, v_x, v_y, a_x, a_y]
     :rtype: ndarray
     """
-    bboxes = loader.load_bboxes(clip_id)
     # TODO: Interpolate missing frames
     entity_count = len(bboxes)
 

@@ -14,7 +14,7 @@ module.exports = {
       template: 'hit.html',
     }),
     new CopyWebpackPlugin([
-      { from: '../test-videos', to: 'videos' },
+      { from: '../data/clips', to: 'videos' },
     ]),
   ],
   module: {

@@ -10,7 +10,7 @@ from peewee import fn
 from playhouse.shortcuts import model_to_dict
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--videos_dir', type=str, help='Path to video directory', default='test-videos')
+parser.add_argument('--videos_dir', type=str, help='Path to video directory', default='data/clips')
 args = parser.parse_args()
 
 

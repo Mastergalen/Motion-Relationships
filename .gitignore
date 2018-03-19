@@ -6,8 +6,9 @@ bin/
 
 app/dist/
 
-test-videos/*
-!test-videos/.gitkeep
+data/clips/
+!data/clips/.gitkeep
+data/flows/*.json
 
 **/*/node_modules/
 
