@@ -2,6 +2,7 @@
 Load inputs for model
 """
 import json
+import glob
 import os
 import keras
 import numpy as np
@@ -9,13 +10,56 @@ from lib.model.config import CONFIG
 
 
 def load():
-    x_train = np.random.randn(100, 300)
-    y_train = np.random.randint(0, 3, 100)
+    x, y = read_files()
+    examples = len(y)
+    # TODO: Unison shuffle
+    print("Total labels: {}".format(examples))
 
-    x_valid = np.random.randn(100, 300)
-    y_valid = np.random.randint(0, 3, 100)
+    split_idx = round(examples * CONFIG['split'])
+
+    x_train = x[:split_idx, :, :]
+    y_train = y[:split_idx]
+
+    x_valid = x[split_idx:, :, :]
+    y_valid = y[split_idx:]
 
     y_train = keras.utils.to_categorical(y_train, CONFIG['num_relationships'])
     y_valid = keras.utils.to_categorical(y_valid, CONFIG['num_relationships'])
 
     return x_train, y_train, x_valid, y_valid
+
+
+def read_files():
+    label_files = list_files('labels')
+
+    x = np.zeros((0, CONFIG['frames'] * 2, 6))
+    y = np.zeros(0)
+    for path in label_files:
+        file_name = os.path.basename(path)
+
+        flow_path = os.path.join(CONFIG['data_dir'], 'flows', file_name)
+        with open(flow_path) as fp:
+            data = np.array(json.load(fp))
+
+            rows, cols = np.indices((data.shape[0], data.shape[0]))
+            xs, ys = np.vstack([rows.ravel(), cols.ravel()])
+
+            a = data[xs, :, :]
+            b = data[ys, :, :]
+
+            product = np.concatenate((a, b), axis=1)
+            x = np.append(x, product, axis=0)
+
+        with open(path) as fp:
+            labels = np.array(json.load(fp))
+            y = np.append(y, labels.flatten())
+
+    return x, y
+
+
+def list_files(dir_name):
+    dir_path = os.path.join(CONFIG['data_dir'], dir_name)
+    files = glob.glob(os.path.join(dir_path, '*.json'))
+    files.sort()
+
+    return files

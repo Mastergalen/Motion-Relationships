@@ -7,7 +7,7 @@ from lib.model.config import CONFIG
 
 def build():
     model = Sequential()
-    model.add(Dense(128, activation='relu', input_shape=(300,)))
+    model.add(Dense(128, activation='relu', input_shape=(1800,)))
     model.add(Dropout(CONFIG['dropout']))
     model.add(Dense(128, activation='relu'))
     model.add(Dense(CONFIG['num_relationships'], activation='softmax'))
@@ -23,6 +23,9 @@ def build():
 
 def train():
     x_train, y_train, x_valid, y_valid = loader.load()
+
+    x_train = x_train.reshape((x_train.shape[0], -1))
+    x_valid = x_valid.reshape((x_valid.shape[0], -1))
 
     model = build()
 
