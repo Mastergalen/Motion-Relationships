@@ -16,7 +16,7 @@ def in_clip(bboxes, max_frames=150):
     entity_count = len(bboxes)
 
     flow = np.zeros((entity_count, max_frames, 6))
-    for entity_idx, entity in enumerate(bboxes.values()):
+    for entity_idx, entity in enumerate(bboxes):
         for t, val in entity:
             # Calculate box center
             x = np.average(val[0:4:2])
@@ -24,6 +24,7 @@ def in_clip(bboxes, max_frames=150):
 
             v_x = v_y = a_x = a_y = np.NaN
 
+            # TODO: Bug, what if entity does not start at 0
             if t > 0:
                 f_prev = flow[entity_idx, t-1, :]
                 v_x, v_y = np.array([x, y]) - f_prev[0:2]
