@@ -55,7 +55,6 @@ def interpolate_missing_frames(bboxes):
                 for i in range(steps - 1):
                     interp = np.round(prev_val + (i+1) * diff)
                     entity.append((prev_frame + i + 1, interp))
-                    print(interp)
 
                 entity.sort(key=lambda x: x[0])
                 prev_frame += 1
