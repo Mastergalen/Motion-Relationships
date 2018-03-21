@@ -7,7 +7,7 @@ from lib.database.models import *
 import lib.mturk.agreement as agreement
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--videos_dir', type=str, help='Path to video directory', default='test-videos')
+parser.add_argument('--videos_dir', type=str, help='Path to video directory', default='data/clips')
 args = parser.parse_args()
 
 query = Assignment.approved()

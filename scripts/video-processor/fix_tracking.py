@@ -47,7 +47,7 @@ def count_unique(annotations):
 
 print("Editing {}".format(args.clip_id))
 
-path = os.path.join('test-videos', '{}.json'.format(args.clip_id))
+path = os.path.join('data', 'clips', '{}.json'.format(args.clip_id))
 with open(path) as f:
     data = json.load(f)
 
