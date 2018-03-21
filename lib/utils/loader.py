@@ -30,7 +30,7 @@ def load_bboxes(path, max_frames=150):
             bbox_dict[entity_id] = box_list
 
     # Sort dictionary values by key
-    bboxes = [val for key, val in sorted(bbox_dict.items(), reverse=True)]
+    bboxes = [val for key, val in sorted(bbox_dict.items())]
 
     bboxes = interpolate_missing_frames(bboxes)
 
