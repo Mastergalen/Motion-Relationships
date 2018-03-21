@@ -1,36 +1,69 @@
 import numpy as np
+import scipy.stats
 from lib.database.models import *
+from lib.types import relationship_to_id
+from lib.utils.datamanager import DataManager
+from playhouse.shortcuts import model_to_dict
+
+reader = DataManager()
 
 
 def inter_annotator_score(clip_id):
-    res = VideoClip \
-        .select() \
-        .join(Assignment) \
-        .join(Annotation) \
-        .where(VideoClip.id == clip_id)
+    """
+    Calculate the inter-annotator score for given clip ID
+    :param clip_id:
+    :return:
+    """
+    # Convert annotations into a matrix
+    annotations = fetch_all_annotations(clip_id)
 
-    video_clip = res.get()
+    M = __collapse__(annotations, len(relationship_to_id))
+    kappa = fleiss_kappa(M)
 
-    vid_dict = model_to_dict(video_clip, backrefs=True)
+    return kappa
 
-    all_ids = all_ids_in_clip(clip_id)
-    assignment_count = len(vid_dict['assignment_set'])
+
+def fetch_all_annotations(clip_id):
+    """
+    Fetches all annotations made by annotators for a clip
+
+    :param clip_id:
+    :return:
+    """
+    assignments = VideoClip.annotations(clip_id)
+
+    all_ids = reader.all_ids_in_clip(clip_id)
+    assignment_count = len(assignments)
 
     # Convert annotations into a matrix
     annotations = np.zeros((assignment_count, len(all_ids), len(all_ids)), dtype=np.uint8)
-    for i, assignment in enumerate(vid_dict['assignment_set']):
+    for i, assignment in enumerate(assignments):
         for annotation in assignment['annotation_set']:
             start_idx = all_ids.index(annotation['start'])
             end_idx = all_ids.index(annotation['end'])
             relationship_id = relationship_to_id[annotation['relationship']]
             annotations[i, start_idx, end_idx] = relationship_id
 
-    M = agreement.collapse(annotations, len(relationship_to_id))
-    kappa = agreement.fleiss_kappa(M)
-    print("Video {} Kappa {}".format(clip_id, kappa))
+    return annotations
 
 
-def collapse(annotations, k):
+def merge_annotations(annotations):
+    """
+    Merges annotations from multiple annotators into a single "ground truth"
+    through majority voting
+
+    :param annotations:
+    :return: ndarray
+    """
+    n, rows, columns = annotations.shape
+    foo = annotations.reshape((n, -1)).T
+    most_frequent, _ = scipy.stats.mode(foo, axis=1)
+    merged = most_frequent.reshape((rows, columns))
+
+    return merged
+
+
+def __collapse__(annotations, k):
     """
     Reformat annotation matrix into frequency of annotating by the same class
 
