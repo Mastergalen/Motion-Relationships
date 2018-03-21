@@ -1,7 +1,7 @@
 import datetime
-
+from playhouse.shortcuts import model_to_dict
 from peewee import *
-
+from peewee import fn
 from lib.database.db import database
 
 
@@ -19,6 +19,19 @@ class VideoClip(BaseModel):
     has_interactions = BooleanField(default=False)
     created_at = DateTimeField(default=datetime.datetime.now)
 
+    @classmethod
+    def annotations(cls, clip_id):
+        data = VideoClip \
+            .select() \
+            .join(Assignment) \
+            .join(Annotation) \
+            .where(VideoClip.id == clip_id) \
+            .get()
+
+        vid_dict = model_to_dict(data, backrefs=True)
+
+        return vid_dict['assignment_set']
+
 
 class Worker(BaseModel):
     id = CharField(primary_key=True)
@@ -34,6 +47,13 @@ class Assignment(BaseModel):
     accepted_at = DateTimeField()
     submitted_at = DateTimeField()
     reward = DecimalField(decimal_places=2)
+
+    @classmethod
+    def approved(cls):
+        return Assignment.select(Assignment.video_clip_id, fn.COUNT('*')) \
+            .where(Assignment.assignment_status == 'Approved') \
+            .group_by(Assignment.video_clip_id) \
+            .having(fn.COUNT('*') > 1)
 
 
 class Annotation(BaseModel):
