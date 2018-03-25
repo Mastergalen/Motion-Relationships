@@ -2,7 +2,7 @@ import json
 import time
 
 import numpy as np
-from lib.sort import Sort
+from lib.preprocessing.sort import Sort
 
 THRESHOLD = 0.9
 

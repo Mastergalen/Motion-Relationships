@@ -11,6 +11,7 @@ def load_bboxes(path, max_frames=150):
         2D array
         1st level = entity
         2nd level = list of 2 tuples: (frame_no, list of bboxes for each frame)
+        bboxes are in the format (x1, y1, width, height)
     :rtype: list
     """
 

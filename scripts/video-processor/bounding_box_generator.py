@@ -10,26 +10,12 @@ import time
 from pathlib import Path
 
 import cv2
-from lib.tracker import apply_tracker
+
+from lib.utils.video import extract_frames
+from lib.preprocessing.tracker import apply_tracker
 
 directory = 'downloads'
-tmpDirectory = 'tmp'
-
-
-def generate_images(vidcap):
-    length = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
-    digits = len(str(length))
-
-    success, image = vidcap.read()
-
-    count = 0
-    while success:
-        cv2.imwrite(
-            "{}/frame_{number:0{width}d}.jpg".format(tmpDirectory, number=count, width=digits),
-            image
-        )
-        count += 1
-        success, image = vidcap.read()
+tmp_dir = 'tmp'
 
 
 def generate_bounding_boxes():
@@ -68,13 +54,10 @@ for i, file_path in enumerate(vid_list):
     else:
         print("Processing {} | {}/{}".format(file_name, i, total_videos))
 
-    if not os.path.exists(tmpDirectory):
-        os.makedirs(tmpDirectory)
-
     vidcap = cv2.VideoCapture(file_path)
 
     # Writes image frames in ./tmp
-    generate_images(vidcap)
+    extract_frames(vidcap, tmp_dir)
 
     # Takes image frames in ./tmp and writes a bounding box file ./tmp/bbox.json
     generate_bounding_boxes()
@@ -91,7 +74,7 @@ for i, file_path in enumerate(vid_list):
             'annotations': tracker_annotations
         }, out, indent=4)
 
-    shutil.rmtree(tmpDirectory)
+    shutil.rmtree(tmp_dir)
 
     total = time.time() - start
 

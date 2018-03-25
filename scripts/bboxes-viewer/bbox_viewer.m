@@ -2,13 +2,11 @@
 
 threshold = 0.9;
 
-data = fileread('-3K26M-m_00-bboxes.json');
+data = fileread('../../data/clips/Aqko6DwEqq4-352.json');
 
 json = jsondecode(data);
 
-
-% seq = load_sequence_color('../video-processor/tmp', 'frame_', 0, 149, -1, 'jpg');
-seq = load_sequence_color('../video-processor/tmp', 'frame_', 0, 10, -1, 'jpg');
+seq = load_sequence_color('../../tmp', 'frame_', 0, 147, -1, 'jpg');
 
 [~, ~, ~, frames] = size(seq);
 

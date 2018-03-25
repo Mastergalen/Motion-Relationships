@@ -18,6 +18,7 @@ def in_clip(bboxes, max_frames=150):
         counter = 0
         for t, val in entity:
             # Calculate box center
+            # FIXME: Bug: Calculate center given (x1, y1, width, height)
             x = np.average(val[0:4:2])
             y = np.average(val[1:4:2])
 

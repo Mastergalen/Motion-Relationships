@@ -1,7 +1,7 @@
 import keras
-from keras.models import Input, Sequential
+from keras.models import Sequential
 from keras.layers import Dense, Dropout
-import lib.model.loader as loader
+import lib.model.loaders.flow as loader
 from lib.model.config import CONFIG
 
 

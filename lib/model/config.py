@@ -1,6 +1,6 @@
 
 CONFIG = {
-    'data_dir': '../../data',
+    'data_dir': 'data',
     'frames': 150,
     'num_relationships': 5,
     'batch_size': 128,

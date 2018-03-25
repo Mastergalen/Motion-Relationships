@@ -1,12 +1,13 @@
 """
-Load inputs for model
+Load inputs for flow vector based model
 """
 import json
-import glob
 import os
 import keras
 import numpy as np
+
 from lib.model.config import CONFIG
+from lib.model.loaders.helpers import list_labels
 
 
 def load():
@@ -30,7 +31,7 @@ def load():
 
 
 def read_files():
-    label_files = list_files('labels')
+    label_files = list_labels()
 
     x = np.zeros((0, CONFIG['frames'] * 2, 6))
     y = np.zeros(0)
@@ -55,11 +56,3 @@ def read_files():
             y = np.append(y, labels.flatten())
 
     return x, y
-
-
-def list_files(dir_name):
-    dir_path = os.path.join(CONFIG['data_dir'], dir_name)
-    files = glob.glob(os.path.join(dir_path, '*.json'))
-    files.sort()
-
-    return files
