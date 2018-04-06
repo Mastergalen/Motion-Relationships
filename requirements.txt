@@ -1,0 +1,6 @@
+opencv-python
+numpy
+keras
+psycopg2
+peewee
+tensorflow

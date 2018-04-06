@@ -2,13 +2,15 @@ bin/
 .idea/
 .env
 
-**/*/tmp
+tmp/
 
 app/dist/
 
-data/clips/
-!data/clips/.gitkeep
-data/flows/*.json
+data/**/*.json
+data/**/*.mp4
+data/**/*.jpg
+
+*.h5
 
 **/*/node_modules/
 

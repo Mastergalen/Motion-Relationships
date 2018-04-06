@@ -25,7 +25,11 @@ class DataManager:
         return list(ids)
 
     def write(self, folder, filename, data):
-        write_path = os.path.join(self.data_dir, folder, filename)
+        write_dir = os.path.join(self.data_dir, folder)
+        write_path = os.path.join(write_dir, filename)
+
+        if not os.path.exists(write_dir):
+            os.makedirs(write_dir)
 
         with open(write_path, 'w') as fp:
             json.dump(data, fp)

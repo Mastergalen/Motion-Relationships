@@ -3,7 +3,7 @@ addpath('utils')
 % For when the tracker script has been applied
 threshold = 0.9;
 
-data = fileread('-3K26M-m_00.json');
+data = fileread('../../data/clips/Aqko6DwEqq4-352.json');
 
 json = jsondecode(data);
 json = json.annotations;
@@ -11,7 +11,7 @@ json = json.annotations;
 
 startFrame = 0;
 % seq = load_sequence_color('../video-processor/tmp', 'frame_', 0, 149, 3, 'jpg');
-seq = load_sequence_color('../video-processor/tmp', 'frame_', startFrame, 149, 3, 'jpg');
+seq = load_sequence_color('../../tmp', 'frame_', startFrame, 147, 3, 'jpg');
 
 [~, ~, ~, frames] = size(seq);
 
