@@ -16,7 +16,7 @@ let annotations = null;
 let currentVideo = 0;
 
 function loadData() {
-    return new Promise((resolve, reject) = > {
+    return new Promise((resolve, reject) => {
         Papa.parse(toReviewStream, {
         complete: function (results) {
             videos = results.data;
@@ -26,8 +26,8 @@ function loadData() {
         header: true
     });
 }).
-    then(() = > {
-        return new Promise((resolve, reject) = > {
+    then(() => {
+        return new Promise((resolve, reject) => {
             Papa.parse(annotationsStream, {
             complete: function (results) {
                 annotations = _.groupBy(results.data, 'youtube_id');
@@ -38,8 +38,8 @@ function loadData() {
 })
     ;
 }).
-    then(() = > {
-        return new Promise((resolve, reject) = > {
+    then(() => {
+        return new Promise((resolve, reject) => {
             Papa.parse(reviewedVideosStream, {
             complete: function (results) {
                 let ids = _.map(results.data, 'youtube_id');
@@ -54,7 +54,7 @@ function loadData() {
     ;
 }
 
-loadData().then(() = > {
+loadData().then(() => {
     setVideo(0
 )
 ;
