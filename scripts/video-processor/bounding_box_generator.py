@@ -14,8 +14,8 @@ import cv2
 from lib.utils.video import extract_frames
 from lib.preprocessing.tracker import apply_tracker
 
-directory = 'downloads'
-tmp_dir = 'tmp'
+directory = 'scripts/video-processor/downloads'
+tmp_dir = 'scripts/video-processor/tmp'
 
 
 def generate_bounding_boxes():
@@ -32,11 +32,11 @@ def generate_bounding_boxes():
             detectron_dir,
             "configs/12_2017_baselines/e2e_mask_rcnn_X-101-32x8d-FPN_1x.yaml"
         ),
-        "--output-dir", "tmp",
+        "--output-dir", tmp_dir,
         "--image-ext", "jpg",
         "--wts",
         "https://s3-us-west-2.amazonaws.com/detectron/36761843/12_2017_baselines/e2e_mask_rcnn_X-101-32x8d-FPN_1x.yaml.06_35_59.RZotkLKI/output/train/coco_2014_train%3Acoco_2014_valminusminival/generalized_rcnn/model_final.pkl",
-        "tmp"
+        tmp_dir
     ], check=True, stdout=subprocess.DEVNULL)
 
 
@@ -63,7 +63,7 @@ for i, file_path in enumerate(vid_list):
     generate_bounding_boxes()
 
     # Apply tracker
-    tracker_annotations = apply_tracker('./tmp/boxes.json')
+    tracker_annotations = apply_tracker(os.path.join(tmp_dir, 'boxes.json'))
 
     with open(annotation_path, 'w') as out:
         json.dump({
