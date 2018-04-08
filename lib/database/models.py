@@ -47,6 +47,7 @@ class Assignment(BaseModel):
     accepted_at = DateTimeField()
     submitted_at = DateTimeField()
     reward = DecimalField(decimal_places=2)
+    manual_review = CharField(null=True)
 
     @classmethod
     def approved(cls):
