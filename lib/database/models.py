@@ -24,7 +24,7 @@ class VideoClip(BaseModel):
         data = VideoClip \
             .select() \
             .join(Assignment) \
-            .join(Annotation) \
+            .join(Annotation, JOIN.LEFT_OUTER) \
             .where(VideoClip.id == clip_id) \
             .get()
 
@@ -52,7 +52,10 @@ class Assignment(BaseModel):
     @classmethod
     def approved(cls):
         return Assignment.select(Assignment.video_clip_id, fn.COUNT('*')) \
-            .where(Assignment.assignment_status == 'Approved') \
+            .where(
+                (Assignment.assignment_status == 'Approved') &
+                ((Assignment.manual_review != 'bad') | (Assignment.manual_review.is_null()))  # Not manually dismissed
+            ) \
             .group_by(Assignment.video_clip_id) \
             .having(fn.COUNT('*') > 1)
 

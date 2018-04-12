@@ -36,3 +36,4 @@ def save(clip_id):
 
 if __name__ == '__main__':
     run()
+    print('Finished export')
