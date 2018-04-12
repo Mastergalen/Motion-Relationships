@@ -90,6 +90,10 @@ def import_mturk():
         if created and len(data['annotations']) > 0:
             Annotation.insert_many(data['annotations']).execute()
         else:
+            if ass.assignment_status != assignment['AssignmentStatus']:
+                ass.assignment_status = assignment['AssignmentStatus']
+                ass.save()
+                print('Updated status to {}'.format(assignment['AssignmentStatus']))
             print("Already imported {}".format(assignment['AssignmentId']))
 
     print('All done')
