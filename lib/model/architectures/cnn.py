@@ -1,13 +1,21 @@
+import os
 import numpy as np
+from comet_ml import Experiment
 from keras import applications
 from keras.preprocessing.image import ImageDataGenerator
-from keras import losses
-from keras import optimizers
+from keras import losses, callbacks, optimizers
 from keras.utils import to_categorical
 from keras.models import Sequential, Model
 from keras.layers import Dropout, Flatten, Dense
+from dotenv import load_dotenv
 
+import lib.model.utils as utils
 from lib.model.config import CONFIG
+from lib.model import evaluation
+
+load_dotenv('.env')
+
+# experiment = Experiment(api_key=os.environ.get('COMET_ML_KEY')
 
 batch_size = 16
 epochs = 50
@@ -19,7 +27,7 @@ validation_data_dir = 'data/cnn_input'
 top_model_weights_path = 'data/weights/bottleneck_fc_model.h5'
 
 
-def save_bottlebeck_features():
+def save_bottleneck_features():
     # FIXME: Is preprocessing (subtracting by mean pixel) needed?
     datagen = ImageDataGenerator(rescale=1. / 255)
 
@@ -74,11 +82,25 @@ def train_top_model():
     model = build_top_model(train_data.shape[1:])
     model.compile(optimizer='rmsprop',
                   loss=losses.categorical_crossentropy, metrics=['accuracy'])
+
+    checkpointer = callbacks.ModelCheckpoint(filepath=top_model_weights_path, verbose=1, save_best_only=True)
+    early_stopping = callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=2)
+
+    class_weight = utils.get_class_weights(train_labels)
+
     model.fit(train_data, train_labels,
               epochs=epochs,
               batch_size=batch_size,
-              validation_data=(validation_data, validation_labels))
-    model.save_weights(top_model_weights_path)
+              validation_data=(validation_data, validation_labels),
+              class_weight=class_weight,
+              callbacks=[
+                  checkpointer,
+                  early_stopping,
+              ])
+
+    model.load_weights(top_model_weights_path)
+
+    evaluation.evaluate(model, validation_data, validation_labels)
 
 
 def fine_tuning():
@@ -130,15 +152,29 @@ def fine_tuning():
         batch_size=batch_size,
         class_mode='categorical')
 
+    checkpointer = callbacks.ModelCheckpoint(filepath="data/weights/top_weights_fine_tune.hdf5", verbose=1, save_best_only=True)
+    early_stopping = callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=2)
+
+    class_weight = utils.get_class_weights(train_generator.classes)
+
     # fine-tune the model
     model.fit_generator(
         train_generator,
         epochs=epochs,
-        validation_data=validation_generator
+        validation_data=validation_generator,
+        class_weight=class_weight,
+        callbacks=[
+            checkpointer,
+            early_stopping,
+        ],
     )
+
+    model.load_weights('data/weights/top_weights_fine_tune.hdf5')
+
+    evaluation.evaluate_generator(model, validation_generator)
 
 
 if __name__ == '__main__':
-    # save_bottlebeck_features()
-    # train_top_model()
-    fine_tuning()
+    save_bottleneck_features()
+    train_top_model()
+    # fine_tuning()
