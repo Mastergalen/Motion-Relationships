@@ -36,6 +36,7 @@ class VideoClip(BaseModel):
 class Worker(BaseModel):
     id = CharField(primary_key=True)
     notes = CharField(null=True)
+    is_expert = BooleanField(default=False)
 
 
 class Assignment(BaseModel):
