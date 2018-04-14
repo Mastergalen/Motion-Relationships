@@ -1,5 +1,5 @@
 """
-Mock MTurk server
+Mock MTurk server for handling submissions from annotation-ui
 """
 import re
 import string

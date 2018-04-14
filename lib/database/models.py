@@ -20,13 +20,23 @@ class VideoClip(BaseModel):
     created_at = DateTimeField(default=datetime.datetime.now)
 
     @classmethod
-    def annotations(cls, clip_id):
-        data = VideoClip \
-            .select() \
-            .join(Assignment) \
-            .join(Annotation, JOIN.LEFT_OUTER) \
-            .where(VideoClip.id == clip_id) \
-            .get()
+    def annotations(cls, clip_id, expert_only):
+        if expert_only:
+            data = VideoClip \
+                .select() \
+                .join(Assignment) \
+                .join(Annotation, JOIN.LEFT_OUTER) \
+                .join(Worker, on=(Worker.id == Assignment.worker_id)) \
+                .where((VideoClip.id == clip_id) & Worker.is_expert) \
+                .get()
+        else:
+            data = VideoClip \
+                .select() \
+                .join(Assignment) \
+                .join(Annotation, JOIN.LEFT_OUTER) \
+                .join(Worker, on=(Worker.id == Assignment.worker_id)) \
+                .where((VideoClip.id == clip_id) & ~Worker.is_expert) \
+                .get()
 
         vid_dict = model_to_dict(data, backrefs=True)
 
@@ -50,15 +60,21 @@ class Assignment(BaseModel):
     reward = DecimalField(decimal_places=2)
     manual_review = CharField(null=True)
 
+
+
     @classmethod
     def approved(cls):
-        return Assignment.select(Assignment.video_clip_id, fn.COUNT('*')) \
+        return Assignment.select(Assignment.video_clip_id, fn.COUNT('*'), fn.MAX(Worker.is_expert.cast('int')).alias('has_expert')) \
+            .join(Worker) \
             .where(
-                (Assignment.assignment_status == 'Approved') &
-                ((Assignment.manual_review != 'bad') | (Assignment.manual_review.is_null()))  # Not manually dismissed
+                Worker.is_expert |
+                (
+                    (Assignment.assignment_status == 'Approved') &
+                    ((Assignment.manual_review != 'bad') | (Assignment.manual_review.is_null()))
+                )  # Not manually dismissed
             ) \
             .group_by(Assignment.video_clip_id) \
-            .having(fn.COUNT('*') > 1)
+            .having((fn.COUNT('*') > 1) | (fn.MAX(Worker.is_expert.cast('int')) > 0))
 
 
 class Annotation(BaseModel):

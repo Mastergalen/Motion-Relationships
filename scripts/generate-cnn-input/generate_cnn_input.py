@@ -3,6 +3,7 @@ import json
 
 import numpy as np
 import cv2
+import progressbar
 
 from lib.model.loaders.helpers import list_labels
 from lib.model.mask import generate_mask
@@ -97,7 +98,8 @@ if __name__ == '__main__':
     create_dirs()
     label_paths = list_labels()
 
-    for path in label_paths:
+    bar = progressbar.ProgressBar()
+    for path in bar(label_paths):
         print(path)
         clip_id = os.path.splitext(os.path.basename(path))[0]
 
