@@ -15,7 +15,7 @@ def inter_annotator_score(clip_id):
     :return:
     """
     # Convert annotations into a matrix
-    annotations = fetch_all_annotations(clip_id)
+    annotations = fetch_all_annotations(clip_id, expert_only=False)
 
     M = __collapse__(annotations, len(relationship_to_id))
     kappa = fleiss_kappa(M)
@@ -23,26 +23,32 @@ def inter_annotator_score(clip_id):
     return kappa
 
 
-def fetch_all_annotations(clip_id):
+def fetch_all_annotations(clip_id, expert_only):
     """
     Fetches all annotations made by annotators for a clip
 
     :param clip_id:
     :return:
     """
-    assignments = VideoClip.annotations(clip_id)
+    assignments = VideoClip.annotations(clip_id, expert_only)
 
     all_ids = reader.all_ids_in_clip(clip_id)
-    assignment_count = len(assignments)
+    assignment_count = sum(1 for x in assignments if x['worker_id']['is_expert'] == expert_only)
 
     # Convert annotations into a matrix
     annotations = np.zeros((assignment_count, len(all_ids), len(all_ids)), dtype=np.uint8)
-    for i, assignment in enumerate(assignments):
+    i = 0
+    for assignment in assignments:
+        if assignment['worker_id']['is_expert'] != expert_only:
+            continue
+
         for annotation in assignment['annotation_set']:
             start_idx = all_ids.index(annotation['start'])
             end_idx = all_ids.index(annotation['end'])
             relationship_id = relationship_to_id[annotation['relationship']]
             annotations[i, start_idx, end_idx] = relationship_id
+
+        i += 1
 
     return annotations
 
