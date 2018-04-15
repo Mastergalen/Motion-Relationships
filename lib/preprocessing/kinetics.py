@@ -3,12 +3,13 @@ Preprocessing required for the Kinetics dataset
 """
 import os
 import numpy as np
+import tensorflow as tf
 from moviepy.editor import *
 
-_OUT_DIR = 'data/kinetics'
 _NB_FRAMES = 150
-
 _VIDEO_SIZE = 224
+
+_OUT_DIR = 'data/kinetics'
 
 
 def rgb(video_path):
@@ -16,9 +17,6 @@ def rgb(video_path):
     Preprocessing pipeline for RGB input
     :return:
     """
-    if not os.path.exists(_OUT_DIR):
-        os.makedirs(_OUT_DIR)
-
     clip_id, _ = os.path.splitext(os.path.basename(video_path))
     video = VideoFileClip(video_path)
 
@@ -31,7 +29,7 @@ def rgb(video_path):
 
     for t in range(_NB_FRAMES):
         # Rescale from -1 to 1
-        np_array[t, ...] = (video.get_frame(t) / 255) - 1
+        np_array[t, ...] = (video.get_frame(t) / (255. / 2.)) - 1
 
     video.write_videofile(os.path.join(_OUT_DIR, "rgb_{}.mp4".format(clip_id)))
 
