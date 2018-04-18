@@ -6,6 +6,10 @@ from sklearn.metrics import f1_score
 def evaluate(trained_model, x_test, y_test):
     y_pred = np.argmax(trained_model.predict(x_test), axis=1)
     y_true = np.argmax(y_test, axis=1)
+    draw_cf_matrix(y_true, y_pred)
+
+
+def draw_cf_matrix(y_true, y_pred):
     cf_matrix = confusion_matrix(y_true, y_pred)
     print(cf_matrix)
 
