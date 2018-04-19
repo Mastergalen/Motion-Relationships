@@ -9,6 +9,8 @@ app/dist/
 data/**/*.json
 data/**/*.mp4
 data/**/*.jpg
+data/**/*.npy
+data/weights
 
 *.h5
 

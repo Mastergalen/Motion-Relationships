@@ -5,8 +5,12 @@ import  warnings
 from lib.model.config import CONFIG
 
 
-def list_labels():
-    return list_files('labels')
+def list_labels(set):
+    """
+    :param set: 'test' or 'training'
+    :return:
+    """
+    return list_files(os.path.join('labels', set))
 
 
 def list_files(dir_name):
