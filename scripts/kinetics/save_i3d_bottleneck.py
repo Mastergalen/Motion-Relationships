@@ -1,6 +1,9 @@
 """
 Save bottleneck features of kinetics-i3d
 https://github.com/deepmind/kinetics-i3d
+
+Need to run scripts/kinetics/video_preprocess.py first to crop videos into
+correct size
 """
 import argparse
 import numpy as np

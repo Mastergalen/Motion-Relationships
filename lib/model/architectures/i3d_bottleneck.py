@@ -1,5 +1,8 @@
 """
 Transfer learning of Kinetics-i3d model
+
+You need to run scripts/kinetics/save_i3d_bottleneck.py first to cache bottleneck features
+on disk first
 """
 import argparse
 import keras.backend as K
