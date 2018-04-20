@@ -43,8 +43,6 @@ def interpolate_missing_frames(bboxes):
     Tracker may lose tracking suddenly, interpolate the missing frames linearly
     """
     for entity_idx, entity in enumerate(bboxes):
-        if entity_idx != 2:
-            continue
         prev_frame = None
         prev_val = None
 
@@ -54,7 +52,7 @@ def interpolate_missing_frames(bboxes):
                 diff = (val - prev_val) / steps
 
                 for i in range(steps - 1):
-                    interp = np.round(prev_val + (i+1) * diff)
+                    interp = np.round(prev_val + (i+1) * diff).astype(np.int32)
                     entity.append((prev_frame + i + 1, interp))
 
                 entity.sort(key=lambda x: x[0])

@@ -17,8 +17,7 @@ _OUT_DIR = 'tmp/vis-bboxes'
 
 parser = argparse.ArgumentParser()
 parser.add_argument('clip_id', type=str)
-parser.add_argument('--entity_ids', type=int, nargs='+')
-parser.add_argument('--draw_ids', action='store_true')
+parser.add_argument('--entity_ids', type=int, nargs='+', help='Draw only bboxes matching IDs')
 args = parser.parse_args()
 
 
@@ -64,7 +63,7 @@ def main():
             x, y, w, h = bboxes[entity_id]
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 3)
 
-            if args.draw_ids:
+            if args.entity_ids is None:
                 cv2.putText(frame, '{}'.format(entity_id), (x, y),
                             cv2.FONT_HERSHEY_SIMPLEX,
                             1,
