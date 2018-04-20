@@ -2,11 +2,12 @@ import os
 import cv2
 
 
-def extract_frame(path, frame_no):
-    cap = cv2.VideoCapture(path)
+def extract_frame(path, frame_no, cv2_cap=None):
+    if cv2_cap is None:
+        cv2_cap = cv2.VideoCapture(path)
 
-    cap.set(1, frame_no)
-    ret, frame = cap.read()
+    cv2_cap.set(1, frame_no)
+    ret, frame = cv2_cap.read()
 
     if not ret:
         raise Exception('Frame could not be read')
