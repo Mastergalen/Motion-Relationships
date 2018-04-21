@@ -22,7 +22,9 @@ class DataManager:
             for annotation in frame:
                 ids.add(annotation[0])
 
-        return list(ids)
+        ids = list(ids)
+        ids.sort()
+        return ids
 
     def write(self, folder, filename, data):
         write_dir = os.path.join(self.data_dir, folder)
