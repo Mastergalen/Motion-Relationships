@@ -26,18 +26,30 @@ class KineticsBottleneckLoader:
     def load_all(self):
         nb_samples = len(self.batches)
 
+        if self.dataset == 'training':
+            # Multiply by 2 for left/right flipping
+            nb_samples *= 2
+
         x = np.zeros((nb_samples, 19, 7, 7, 1024))
         y = np.zeros(nb_samples)
 
         for i, batch in enumerate(self.batches):
             clip_id, label = batch[0]
-            x[i, ...] = np.load(os.path.join(_DATA_DIR, '{}.npy'.format(clip_id)))[0, ...]
+            non_flip_data = np.load(os.path.join(_DATA_DIR, '{}.npy'.format(clip_id)))[0, ...]
+            if self.dataset == 'training':
+                x[i * 2, ...] = non_flip_data
+                x[(i * 2) + 1, ...] = np.load(os.path.join(_DATA_DIR, '{}_flip.npy'.format(clip_id)))[0, ...]
+            else:
+                x[i, ...] = non_flip_data
 
             # Skip label class 1 (unsure)
             if label > 1:
                 label -= 1
 
-            y[i] = label
+            if self.dataset == 'training':
+                y[(i*2):(i*2)+2] = label
+            else:
+                y[i] = label
 
         return x, to_categorical(y, self.nb_classes)
 
