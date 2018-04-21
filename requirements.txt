@@ -4,3 +4,4 @@ keras
 psycopg2
 peewee
 tensorflow
+matplotlib

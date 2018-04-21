@@ -61,8 +61,8 @@ def main():
     test_x, test_y = test_loader.load_all()
 
     if args.training:
-        test_loader = KineticsBottleneckLoader(_NB_CLASSES, 'training')
-        x, y = test_loader.load_all()
+        train_loader = KineticsBottleneckLoader(_NB_CLASSES, 'training')
+        x, y = train_loader.load_all()
 
         class_weights = get_class_weights(y)
 
