@@ -14,7 +14,6 @@ import tensorflow as tf
 
 from lib.model.architectures import i3d
 from lib.model.config import CONFIG
-from lib.model.loaders.kinetics import KineticsLoader
 
 _BATCH_SIZE = 1
 
@@ -23,6 +22,7 @@ _IMAGE_SIZE = 224
 _NUM_CLASSES = CONFIG['num_relationships']
 
 _DATA_DIR = 'data/kinetics'
+_OUT_DIR = 'data/kinetics_bottleneck'
 
 _CHECKPOINT_PATHS = {
     'rgb': 'data/weights/kinetics-i3d/rgb_scratch/model.ckpt',
@@ -34,6 +34,7 @@ _CHECKPOINT_PATHS = {
 tf.logging.set_verbosity(tf.logging.INFO)
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--flip', action='store_true', help='Enable data augmentation via flipping')
 args = parser.parse_args()
 
 
@@ -43,7 +44,6 @@ def main(unused_argv):
     rgb_input = tf.placeholder(
         tf.float32,
         shape=(_BATCH_SIZE, _SAMPLE_VIDEO_FRAMES, _IMAGE_SIZE, _IMAGE_SIZE, 3))
-    rgb_y = tf.placeholder(tf.int64, [None, _NUM_CLASSES])
 
     with tf.variable_scope('RGB'):
         rgb_model = i3d.InceptionI3d(
@@ -56,8 +56,6 @@ def main(unused_argv):
         if variable.name.split('/')[0] == 'RGB':
             rgb_variable_map[variable.name.replace(':0', '')] = variable
     rgb_saver = tf.train.Saver(var_list=rgb_variable_map, reshape=True)
-
-    dataset = KineticsLoader(_BATCH_SIZE, _NUM_CLASSES, 'training')
 
     with tf.Session() as sess:
         init = tf.global_variables_initializer()
@@ -76,7 +74,13 @@ def main(unused_argv):
             x[0, ...] = np.load(path)
             out_bottleneck = sess.run(rgb_bottleneck, feed_dict={rgb_input: x})
 
-            np.save('data/kinetics_bottleneck/{}.npy'.format(clip_id), out_bottleneck)
+            np.save(os.path.join(_OUT_DIR, '{}.npy'.format(clip_id)), out_bottleneck)
+
+            if args.flip:
+                x_flipped = x[:, :, :, ::-1, :]  # Flip by reversing columns
+
+                out_flipped_bottleneck = sess.run(rgb_bottleneck, feed_dict={rgb_input: x_flipped})
+                np.save(os.path.join(_OUT_DIR, '{}_flip.npy'.format(clip_id)), out_flipped_bottleneck)
 
 
 if __name__ == '__main__':
