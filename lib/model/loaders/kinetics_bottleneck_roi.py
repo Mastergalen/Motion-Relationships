@@ -21,11 +21,13 @@ random.seed(7)
 
 
 class KineticsBottleneckRoiLoader:
-    def __init__(self, nb_classes, dataset):
+    def __init__(self, nb_classes, dataset, frame_size=224):
         self.batch_size = 1
         self.step = 0
         self.nb_classes = nb_classes
         self.dataset = dataset
+        self.frame_size = frame_size
+
         self.train_labels = {0: [], 1: [], 2: [], 3: [], 4: []}
         self.batches = []
 
@@ -35,17 +37,31 @@ class KineticsBottleneckRoiLoader:
     def load_all(self):
         nb_samples = len(self.batches)
 
+        if self.dataset == 'training':
+            # Multiply by 2 for left/right flipping
+            nb_samples *= 2
+
         bottleneck_x = np.zeros((nb_samples, 19, 7, 7, 1024))
         roi_x = np.zeros((nb_samples, 150, 8))
         y = np.zeros(nb_samples)
 
         for i, batch in enumerate(self.batches):
             (clip_id, start_id, end_id), label = batch[0]
-            bottleneck_x[i, ...] = np.load(os.path.join(_DATA_DIR, '{}.npy'.format(clip_id)))[0, ...]
+            non_flip_data = np.load(os.path.join(_DATA_DIR, '{}.npy'.format(clip_id)))[0, ...]
+            if self.dataset == 'training':
+                bottleneck_x[i * 2, ...] = non_flip_data
+                bottleneck_x[(i * 2) + 1, ...] = np.load(os.path.join(_DATA_DIR, '{}_flip.npy'.format(clip_id)))[0, ...]
+            else:
+                bottleneck_x[i, ...] = non_flip_data
 
             # FIXME: Investigate out of range
             try:
-                roi_x[i, ...] = self.__bbox_vector__(clip_id, start_id, end_id)
+                if self.dataset == 'training':
+                    bbox_vector = self.__bbox_vector__(clip_id, start_id, end_id)
+                    roi_x[i * 2, ...] = bbox_vector
+                    roi_x[(i * 2) + 1, ...] = self.__flip_vector__(bbox_vector)
+                else:
+                    roi_x[i, ...] = self.__bbox_vector__(clip_id, start_id, end_id)
             except IndexError:
                 warnings.warn('{} failed'.format(clip_id))
 
@@ -119,6 +135,16 @@ class KineticsBottleneckRoiLoader:
             self.batches.append([(clip_id, 0)])
 
         random.shuffle(self.batches)
+
+    def __flip_vector__(self, v):
+        # Flip x coords only horizontally
+        v[:, [0, 4]] = self.frame_size - v[:, [0, 4]]
+
+        # Then subtract by the width
+        v[:, 0] = v[:, 0] - v[0, 2]
+        v[:, 4] = v[:, 4] - v[0, 6]
+
+        return v
 
     def __load_data__(self):
         """
