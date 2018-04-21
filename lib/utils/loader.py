@@ -33,12 +33,19 @@ def load_bboxes(path, max_frames=150):
     # Sort dictionary values by key
     bboxes = [val for key, val in sorted(bbox_dict.items())]
 
-    bboxes = interpolate_missing_frames(bboxes)
+    bboxes = __interpolate_missing_frames__(bboxes)
 
     return bboxes
 
 
-def interpolate_missing_frames(bboxes):
+def get_video_dims(path):
+    with open(path) as f:
+        data = json.load(f)
+
+    return data['height'], data['width']
+
+
+def __interpolate_missing_frames__(bboxes):
     """
     Tracker may lose tracking suddenly, interpolate the missing frames linearly
     """
