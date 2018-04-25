@@ -1,5 +1,7 @@
 """
 Always no relationship baseline
+
+python -m lib.model.architectures.always_no_relationship
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,13 +13,13 @@ _NB_CLASSES = 4
 
 
 def main():
-    data = KineticsBottleneckLoader(_NB_CLASSES, 'test')
+    data = KineticsBottleneckLoader(_NB_CLASSES, 'test', use_lr_flip=False)
     x, y = data.load_all()
 
     y_pred = np.zeros(len(y))
     y_pred[:] = 0  # Always predict no relationship
 
-    evaluation.draw_confusion_matrix(np.argmax(y, axis=1), y_pred)
+    evaluation.draw_confusion_matrix(np.argmax(y, axis=1), y_pred, nb_classes=_NB_CLASSES)
 
     plt.show()
 
