@@ -16,13 +16,22 @@ from keras.layers import Conv3D, AveragePooling3D, Dropout, Lambda, Reshape, Act
 from lib.model.loaders.kinetics_bottleneck import KineticsBottleneckLoader
 from lib.model import evaluation
 
-_NB_CLASSES = 4
 _BATCH_SIZE = 8
 _NB_EPOCHS = 50
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--training', action='store_true')
+parser.add_argument('--lr_flip', action='store_true',
+                    help='Flag for enabling horizontal flipping data augmentation')
+parser.add_argument('--binary_class', action='store_true',
+                    help='Whether to reduce the classification problem to a binary problem')
 args = parser.parse_args()
+
+
+if args.binary_class:
+    _NB_CLASSES = 2
+else:
+    _NB_CLASSES = 4
 
 
 def build_model():
@@ -57,11 +66,11 @@ def main():
     model.compile(optimizer='adam', loss=losses.categorical_crossentropy,
                   metrics=['accuracy'])
 
-    test_loader = KineticsBottleneckLoader(_NB_CLASSES, 'test')
+    test_loader = KineticsBottleneckLoader(_NB_CLASSES, 'test', args.lr_flip)
     test_x, test_y = test_loader.load_all()
 
     if args.training:
-        train_loader = KineticsBottleneckLoader(_NB_CLASSES, 'training')
+        train_loader = KineticsBottleneckLoader(_NB_CLASSES, 'training', args.lr_flip)
         x, y = train_loader.load_all()
 
         class_weights = get_class_weights(y)
@@ -82,8 +91,8 @@ def main():
     model.load_weights('data/weights/i3d_bottleneck_weights.hdf5')
 
     print('Test results:')
-    evaluation.evaluate(model, test_x, test_y)
-
+    evaluation.evaluate(model, test_x, test_y, _NB_CLASSES)
+    print('Data augmentation: {}'.format(args.lr_flip))
     plt.show()
 
 

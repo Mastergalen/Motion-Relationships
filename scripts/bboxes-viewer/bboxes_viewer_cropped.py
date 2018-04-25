@@ -83,7 +83,7 @@ def main():
             if entity_id not in bboxes:
                 continue
             x, y, w, h = bboxes[entity_id]
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 3)
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
             if args.entity_ids is None:
                 cv2.putText(frame, '{}'.format(entity_id), (x, y),

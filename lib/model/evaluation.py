@@ -5,14 +5,14 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import f1_score
 
 
-def evaluate(trained_model, x_test, y_test):
+def evaluate(trained_model, x_test, y_test, nb_classes=4):
     y_pred = np.argmax(trained_model.predict(x_test), axis=1)
     y_true = np.argmax(y_test, axis=1)
 
-    draw_confusion_matrix(y_true, y_pred)
+    draw_confusion_matrix(y_true, y_pred, nb_classes)
 
 
-def draw_confusion_matrix(y_true, y_pred):
+def draw_confusion_matrix(y_true, y_pred, nb_classes=4):
     cf_matrix = confusion_matrix(y_true, y_pred)
 
     class_wise_f1 = np.round(f1_score(y_true, y_pred, average=None)*100)*0.01
@@ -20,7 +20,10 @@ def draw_confusion_matrix(y_true, y_pred):
     print('the mean-f1 score: {:.3f}'.format(f_score))
 
     f, (ax1, ax2) = plt.subplots(1, 2)
-    classes = ['No relationship', 'Avoids', 'Gives-way', 'Group']
+    if nb_classes == 2:
+        classes = ['No relationship', 'Has relationship']
+    else:
+        classes = ['No relationship', 'Avoids', 'Gives-way', 'Group']
     plot_confusion_matrix(cf_matrix, axes=ax1, title='Without normalisation', classes=classes)
     plot_confusion_matrix(cf_matrix, axes=ax2, title='Normalisation', normalize=True, classes=classes)
 

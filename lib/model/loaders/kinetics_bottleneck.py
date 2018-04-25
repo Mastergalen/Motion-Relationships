@@ -12,11 +12,12 @@ np.random.seed(7)
 
 
 class KineticsBottleneckLoader:
-    def __init__(self, nb_classes, dataset):
+    def __init__(self, nb_classes, dataset, use_lr_flip):
         self.batch_size = 1
         self.step = 0
         self.nb_classes = nb_classes
         self.dataset = dataset
+        self.use_lr_flip = use_lr_flip
         self.train_labels = {0: [], 1: [], 2: [], 3: [], 4: []}
         self.batches = []
 
@@ -26,7 +27,7 @@ class KineticsBottleneckLoader:
     def load_all(self):
         nb_samples = len(self.batches)
 
-        if self.dataset == 'training':
+        if self.dataset == 'training' and self.use_lr_flip:
             # Multiply by 2 for left/right flipping
             nb_samples *= 2
 
@@ -36,7 +37,7 @@ class KineticsBottleneckLoader:
         for i, batch in enumerate(self.batches):
             clip_id, label = batch[0]
             non_flip_data = np.load(os.path.join(_DATA_DIR, '{}.npy'.format(clip_id)))[0, ...]
-            if self.dataset == 'training':
+            if self.dataset == 'training' and self.use_lr_flip:
                 x[i * 2, ...] = non_flip_data
                 x[(i * 2) + 1, ...] = np.load(os.path.join(_DATA_DIR, '{}_flip.npy'.format(clip_id)))[0, ...]
             else:
@@ -51,19 +52,11 @@ class KineticsBottleneckLoader:
             else:
                 y[i] = label
 
+        # Reduce to binary classification problem
+        if self.nb_classes == 2:
+            y[y > 0] = 1
+
         return x, to_categorical(y, self.nb_classes)
-
-    def fetch(self):
-        for batch in self.batches:
-            batch_x = np.zeros((self.batch_size, 150, 224, 224, 3))
-            batch_y = np.zeros((self.batch_size, self.nb_classes))
-
-            for i in range(self.batch_size):
-                clip_id, label = batch[i]
-                batch_x[i, ...] = np.load(os.path.join(_DATA_DIR, '{}.npy'.format(clip_id)))
-                batch_y[i, label] = 1
-
-            yield batch_x, batch_y
 
     def __generate_batches__(self):
         for i in range(2, 5):
