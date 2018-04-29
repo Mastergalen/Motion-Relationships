@@ -1,12 +1,11 @@
 import os
-import json
-
 import numpy as np
 import cv2
 import progressbar
+import warnings
 
-from lib.model.loaders.helpers import list_labels
 from lib.model.mask import generate_mask
+from lib.model.loaders.cnn import CnnLoader
 from lib.utils.loader import load_bboxes
 from lib.utils.video import extract_frame
 from lib.model.config import CONFIG
@@ -29,7 +28,12 @@ def generate_img(clip_id, id_pair):
     box_path = os.path.join(CLIP_DIR, '{}.json'.format(clip_id))
     video_path = os.path.join(CLIP_DIR, '{}.mp4'.format(clip_id))
     boxes = load_bboxes(box_path)
-    frame_no = find_common_frame(boxes[id_A], boxes[id_B])
+
+    try:
+        frame_no = find_common_frame(boxes[id_A], boxes[id_B])
+    except IndexError:
+        warnings.warn('IndexError: {} {}'.format(clip_id, id_pair))
+        return None, None
 
     if frame_no is None:
         return None, None
@@ -86,37 +90,33 @@ def extract_frame_ids(bboxes):
     return ids
 
 
-def create_dirs():
+def create_dirs(set_name):
     for i in range(CONFIG['num_relationships']):
-        dir_path = os.path.join(OUTPUT_DIR, str(i))
+        dir_path = os.path.join(OUTPUT_DIR, set_name, str(i))
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
 
 
-if __name__ == '__main__':
-    print("Generating CNN input images")
-    create_dirs()
-    label_paths = list_labels()
+def generate_set(set_name):
+    create_dirs(set_name)
+    loader = CnnLoader(CONFIG['num_relationships'], set_name)
 
     bar = progressbar.ProgressBar()
-    for path in bar(label_paths):
-        print(path)
-        clip_id = os.path.splitext(os.path.basename(path))[0]
 
-        labels = np.array(json.load(open(path)))
+    for clip_id, idx_pair, label in bar(loader.batches):
+        output_img, frame_no = generate_img(clip_id, idx_pair)
+        if output_img is None:
+            continue
+        output_path = os.path.join(
+            OUTPUT_DIR,
+            set_name,
+            str(label),
+            '{}-t{}-{}-{}.jpg'.format(clip_id, frame_no, str(idx_pair[0]), str(idx_pair[1]))
+        )
+        cv2.imwrite(output_path, output_img)
 
-        for idx, label in np.ndenumerate(labels):
-            # Skip relationships to itself
-            if idx[0] == idx[1]:
-                continue
-            output_img, frame_no = generate_img(clip_id, idx)
 
-            if output_img is None:
-                continue
-
-            output_path = os.path.join(
-                OUTPUT_DIR,
-                str(label),
-                '{}-t{}-{}-{}.jpg'.format(clip_id, frame_no, str(idx[0]), str(idx[1]))
-            )
-            cv2.imwrite(output_path, output_img)
+if __name__ == '__main__':
+    print("Generating CNN input images")
+    generate_set('training')
+    generate_set('test')

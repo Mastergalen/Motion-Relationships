@@ -1,5 +1,10 @@
+"""
+Retrain image classification network for classifying bounding box masking images
+"""
+import argparse
 import numpy as np
-from keras import applications
+import matplotlib.pyplot as plt
+from keras import applications, callbacks
 from keras.preprocessing.image import ImageDataGenerator
 from keras import losses
 from keras import optimizers
@@ -8,18 +13,21 @@ from keras.models import Sequential, Model
 from keras.layers import Dropout, Flatten, Dense
 
 from lib.model.config import CONFIG
+from lib.model import evaluation
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--training', action='store_true')
+args = parser.parse_args()
 
 batch_size = 16
 epochs = 50
 img_height, img_width = 228, 228
-train_data_dir = 'data/cnn_input'
-
-# FIXME: Temporarily set validation set to training
-validation_data_dir = 'data/cnn_input'
+train_data_dir = 'data/cnn_input/training'
+test_data_dir = 'data/cnn_input/test'
 top_model_weights_path = 'data/weights/bottleneck_fc_model.h5'
 
 
-def save_bottlebeck_features():
+def save_bottleneck_features():
     # FIXME: Is preprocessing (subtracting by mean pixel) needed?
     datagen = ImageDataGenerator(rescale=1. / 255)
 
@@ -33,19 +41,19 @@ def save_bottlebeck_features():
         class_mode='categorical',
         shuffle=False)
     bottleneck_features_train = model.predict_generator(
-        generator)
+        generator, len(generator))
     np.save('tmp/bottleneck_features_train_y.npy', generator.classes)
     np.save('tmp/bottleneck_features_train.npy',
             bottleneck_features_train)
 
     generator = datagen.flow_from_directory(
-        validation_data_dir,
+        test_data_dir,
         target_size=(img_width, img_height),
         batch_size=batch_size,
         class_mode='categorical',
         shuffle=False)
     bottleneck_features_validation = model.predict_generator(
-        generator)
+        generator, len(generator))
     np.save('tmp/bottleneck_features_validation_y.npy', generator.classes)
     np.save('tmp/bottleneck_features_validation.npy',
             bottleneck_features_validation)
@@ -62,28 +70,45 @@ def build_top_model(input_shape):
 
 
 def train_top_model():
-    print('Training top model')
-    train_data = np.load('tmp/bottleneck_features_train.npy')
-    train_labels = to_categorical(np.load('tmp/bottleneck_features_train_y.npy'),
-                                  num_classes=CONFIG['num_relationships'])
-
     validation_data = np.load('tmp/bottleneck_features_validation.npy')
     validation_labels = to_categorical(np.load('tmp/bottleneck_features_validation_y.npy'),
                                        num_classes=CONFIG['num_relationships'])
 
-    model = build_top_model(train_data.shape[1:])
+    model = build_top_model(validation_data.shape[1:])
     model.compile(optimizer='rmsprop',
                   loss=losses.categorical_crossentropy, metrics=['accuracy'])
-    model.fit(train_data, train_labels,
-              epochs=epochs,
-              batch_size=batch_size,
-              validation_data=(validation_data, validation_labels))
-    model.save_weights(top_model_weights_path)
+
+    if args.training:
+        print('Training top model')
+
+        train_data = np.load('tmp/bottleneck_features_train.npy')
+        train_labels = to_categorical(np.load('tmp/bottleneck_features_train_y.npy'),
+                                      num_classes=CONFIG['num_relationships'])
+
+        checkpointer = callbacks.ModelCheckpoint(filepath=top_model_weights_path,
+                                                 verbose=1,
+                                                 save_best_only=True)
+        early_stopping = callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10)
+
+        model.fit(train_data, train_labels,
+                  epochs=epochs,
+                  batch_size=batch_size,
+                  callbacks=[
+                      checkpointer,
+                      early_stopping,
+                  ],
+                  validation_data=(validation_data, validation_labels))
+
+    model.load_weights(top_model_weights_path)
+
+    evaluation.evaluate(model, validation_data, validation_labels)
+
+    plt.show()
 
 
 def fine_tuning():
     print('Fine tuning')
-    # TODO: Change to InceptionResNet
+
     base_model = applications.VGG16(weights='imagenet', include_top=False, input_shape=(img_height, img_width, 3))
     print('Base model loaded')
 
@@ -125,7 +150,7 @@ def fine_tuning():
         class_mode='categorical')
 
     validation_generator = test_datagen.flow_from_directory(
-        validation_data_dir,
+        test_data_dir,
         target_size=(img_height, img_width),
         batch_size=batch_size,
         class_mode='categorical')
@@ -139,6 +164,6 @@ def fine_tuning():
 
 
 if __name__ == '__main__':
-    # save_bottlebeck_features()
-    # train_top_model()
-    fine_tuning()
+    # save_bottleneck_features()
+    train_top_model()
+    # fine_tuning()
