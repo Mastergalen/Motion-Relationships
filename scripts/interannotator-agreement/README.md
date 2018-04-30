@@ -1,1 +1,1 @@
-Python script for calculating inter-annotator agreement with Fleiss' Kappa.
+Python script for debugging purposes tht calculates the inter-annotator agreement of all videos using Fleiss' Kappa.

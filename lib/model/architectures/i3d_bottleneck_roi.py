@@ -17,7 +17,7 @@ from keras.layers import Conv3D, AveragePooling3D, Dropout,\
 from lib.model.loaders.kinetics_bottleneck_roi import KineticsBottleneckRoiLoader
 from lib.model import evaluation
 
-_NB_CLASSES = 4
+_NB_CLASSES = 2
 _BATCH_SIZE = 8
 _NB_EPOCHS = 50
 _NB_FRAMES = 150
@@ -110,7 +110,7 @@ def main():
     model.load_weights('data/weights/i3d_bottleneck_weights_roi.hdf5')
 
     print('Test results:')
-    evaluation.evaluate(model, [test_bottleneck_x, test_roi_x], test_y)
+    evaluation.evaluate(model, [test_bottleneck_x, test_roi_x], test_y, nb_classes=_NB_CLASSES)
 
     plt.show()
 

@@ -1,6 +1,10 @@
-These scripts do all the preprocessing needed before videos are ready for annotation.
+These scripts perform all the preprocessing needed before videos are ready for annotation.
+
+It uses Mask-CNN for object detection, retrieves the bounding boxes, and then applies the Hungarian algorithm for tracking.
 
 ## Installation
+
+Install all the dependencies and clone our fork of Detectron.
 
 ```
 cd ~
@@ -19,6 +23,8 @@ python3 download_youtube.py
 
 ## Run Detectron
 
+This will run the object detection network on all frames and apply the tracker.
+
 ```
 python3 bounding_box_generator.py
 ```
@@ -35,6 +41,8 @@ python2 tools/infer_simple.py \
 ```
 
 ## Correcting ID mismatches
+
+Run the utility script for manually correcting ID mismatches.
 
 ```
 python fix_tracking.py 

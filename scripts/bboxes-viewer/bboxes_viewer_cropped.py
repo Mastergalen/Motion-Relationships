@@ -66,7 +66,7 @@ def main():
         if t in annotation_map:
             bboxes = annotation_map[t]
         else:
-            bboxes = []
+            bboxes = {}
 
         try:
             frame = video.extract_frame(video_path, t, cv2_cap=cap)

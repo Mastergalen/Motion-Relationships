@@ -71,6 +71,10 @@ class KineticsBottleneckRoiLoader:
 
             y[i] = label
 
+        # Reduce to binary classification problem
+        if self.nb_classes == 2:
+            y[y > 0] = 1
+
         return bottleneck_x, roi_x, to_categorical(y, self.nb_classes)
 
     def fetch(self):
